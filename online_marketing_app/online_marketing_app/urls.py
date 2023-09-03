@@ -14,9 +14,16 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+# pylint: disable=unused-import
 from django.contrib import admin
 from django.urls import path
+from django.urls import include
+from car_app.views.page_not_found import custom_404_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include('car_app.urls')),
 ]
+
+# pylint: disable=invalid-name
+handler404 = 'car_app.views.page_not_found.custom_404_view'
