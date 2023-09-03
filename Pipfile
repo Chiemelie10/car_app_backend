@@ -7,6 +7,10 @@ name = "pypi"
 django = "*"
 python-dotenv = "*"
 mysqlclient = "*"
+djangorestframework = "*"
+beautifulsoup4 = "*"
+bcrypt = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 
