@@ -11,6 +11,8 @@ djangorestframework = "*"
 beautifulsoup4 = "*"
 bcrypt = "*"
 django-cors-headers = "*"
+djangorestframework-simplejwt = "*"
+pyjwt = "*"
 
 [dev-packages]
 
