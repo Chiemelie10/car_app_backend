@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.db.utils import IntegrityError
-from car_app.views.password_hash import password_hasher
+from car_app.views.views_helper_functions import password_hasher
 from car_app.serializers.middleware.validate_user import validate_user
 from car_app.models import User
 

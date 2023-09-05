@@ -18,7 +18,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.urls import include
-from car_app.views.page_not_found import custom_404_view
+from car_app.views.exception_handlers.page_not_found import custom_404_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,4 +26,4 @@ urlpatterns = [
 ]
 
 # pylint: disable=invalid-name
-handler404 = 'car_app.views.page_not_found.custom_404_view'
+handler404 = 'car_app.views.exception_handlers.page_not_found.custom_404_view'

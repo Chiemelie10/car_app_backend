@@ -1,5 +1,6 @@
 """This module defines class UserLogin."""
 from django.http import JsonResponse
+from django.utils import timezone
 from django.contrib.auth import authenticate
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -31,9 +32,13 @@ class UserLogin(APIView):
 
         refresh = RefreshToken.for_user(user)
         refresh['username'] = user.username
+        refresh['is_superuser'] = user.is_superuser
         access = str(refresh.access_token)
 
-        response = JsonResponse({'access': access}, status=400)
+        response = JsonResponse({'access': access}, status=200)
         response.set_cookie('refresh', str(refresh), httponly=True)
+
+        user.last_login = timezone.now()
+        user.save()
 
         return response

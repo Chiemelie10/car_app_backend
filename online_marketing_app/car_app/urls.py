@@ -4,6 +4,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from car_app.views.register_marketer import MarketerRegistrationView
 from car_app.views.login_user import UserLogin
 from car_app.views.logout_user import UserLogout
+from car_app.views.get_delete_update_user import GetDeleteUpdateUser
 
 
 urlpatterns = [
@@ -17,4 +18,6 @@ urlpatterns = [
     path('api/token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/logout/', UserLogout.as_view(), name='logout_user'),
     path('api/logout', UserLogout.as_view(), name='logout_user'),
+    path('api/user/<str:pk>/', GetDeleteUpdateUser.as_view(), name='get_delete_update_user'),
+    path('api/user/<str:pk>', GetDeleteUpdateUser.as_view(), name='get_delete_update_user')
 ]
