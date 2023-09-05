@@ -8,7 +8,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.http import JsonResponse
 from car_app.views.views_helper_functions import decode_token
 from car_app.models import User
-from car_app.serializers.user_serializer import UserModelSerializer
+from car_app.serializers.user_serializer import GetUserSerializer
 #from dotenv import load_dotenv
 
 
@@ -37,7 +37,7 @@ class GetDeleteUpdateUser(APIView):
 
         try:
             user_queryset = User.objects.get(pk=pk)
-            serializer = UserModelSerializer(user_queryset)
+            serializer = GetUserSerializer(user_queryset)
             return JsonResponse(serializer.data, status=200)
         except User.DoesNotExist:
             return JsonResponse({'error': 'User not found'}, status=400)

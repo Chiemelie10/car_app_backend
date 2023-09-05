@@ -25,3 +25,15 @@ class UserModelSerializer(serializers.ModelSerializer):
         """Defines the model and fields to be validated."""
         model = User
         fields = '__all__'
+
+
+class GetUserSerializer(serializers.ModelSerializer):
+    """
+    This class serializes django queryset returned from the database.
+    This means it converts queryset to python dictionary, which can then
+    be easily converted to JSON.
+    """
+    class Meta:
+        """Defines the fields of the model that will be serialized."""
+        model = User
+        exclude = ('password',)
