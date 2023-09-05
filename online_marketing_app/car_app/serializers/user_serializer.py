@@ -29,8 +29,9 @@ class UserModelSerializer(serializers.ModelSerializer):
 
 class GetUserSerializer(serializers.ModelSerializer):
     """
-    This class serializes django queryset returned from the database.
-    This means it converts queryset to python dictionary, which can then
+    This class serializes django queryset(many) or object(single) returned
+    from the database. This means it converts a user instance to python
+    dictionary or a queryset to list of dictionaries, which can then
     be easily converted to JSON.
     """
     class Meta:

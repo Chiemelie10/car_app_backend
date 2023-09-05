@@ -5,6 +5,7 @@ from car_app.views.register_marketer import MarketerRegistrationView
 from car_app.views.login_user import UserLogin
 from car_app.views.logout_user import UserLogout
 from car_app.views.get_delete_update_user import GetDeleteUpdateUser
+from car_app.views.get_users import GetUsers
 
 
 urlpatterns = [
@@ -19,5 +20,7 @@ urlpatterns = [
     path('api/logout/', UserLogout.as_view(), name='logout_user'),
     path('api/logout', UserLogout.as_view(), name='logout_user'),
     path('api/user/<str:pk>/', GetDeleteUpdateUser.as_view(), name='get_delete_update_user'),
-    path('api/user/<str:pk>', GetDeleteUpdateUser.as_view(), name='get_delete_update_user')
+    path('api/user/<str:pk>', GetDeleteUpdateUser.as_view(), name='get_delete_update_user'),
+    path('api/users/', GetUsers.as_view(), name='get_users'),
+    path('api/users', GetUsers.as_view(), name='get_users'),
 ]

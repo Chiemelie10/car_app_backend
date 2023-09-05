@@ -1,4 +1,4 @@
-"""This module defines the class GetDeleteUpdateUser and AllUsersOperations."""
+"""This module defines the class GetDeleteUpdateUser."""
 #from os import getenv
 #import jwt
 from rest_framework.views import APIView
@@ -28,8 +28,8 @@ class GetDeleteUpdateUser(APIView):
 
     def get(self, request, pk):
         """
-        This method returns a user's data if the provided id matches any in the database.
-        It also returns an error status code of 400 if provided id fails to
+        This method returns a user's data if the provided id matches any in the
+        database. It also returns a status code of 400 if provided id fails to
         match any of the ids in the database.
         """
         if request.content_type != 'application/json':
