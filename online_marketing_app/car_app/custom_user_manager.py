@@ -23,6 +23,8 @@ class CustomUserManager(BaseUserManager):
         """This method creates a super user."""
         other_fields.setdefault('is_staff', True)
         other_fields.setdefault('is_superuser', True)
+        other_fields.setdefault('is_verified', True)
+        other_fields.setdefault('is_manager', True)
 
         if other_fields.get('is_staff') is not True:
             raise ValueError('Superuser must have is_staff=True.')

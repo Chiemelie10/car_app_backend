@@ -158,3 +158,14 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+email_host_password = getenv('EMAIL_HOST_PASSWORD')
+email_host_user = getenv('EMAIL_HOST_USER')
+
+EMAIL_HOST = 'smtp.gmail.com'
+FMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = email_host_user
+#EMAIL_HOST_PASSWORD = email_host_password
+EMAIL_HOST_PASSWORD = 'jlhfxffrnlygnwbt'

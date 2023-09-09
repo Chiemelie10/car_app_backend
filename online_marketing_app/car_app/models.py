@@ -15,6 +15,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
+    is_manager = models.BooleanField(default=False)
+    is_marketer = models.BooleanField(default=False)
+    is_verified = models.BooleanField(default=False)
+    team_manager = models.ForeignKey('self', null=True, blank=True,
+                                     on_delete=models.SET_NULL, related_name='managed_users')
+    manager_code = models.CharField(max_length=12, blank=True, null=True, editable=False)
+    referral_code = models.CharField(max_length=12, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

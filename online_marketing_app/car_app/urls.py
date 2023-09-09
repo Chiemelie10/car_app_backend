@@ -6,12 +6,14 @@ from car_app.views.login_user import UserLogin
 from car_app.views.logout_user import UserLogout
 from car_app.views.get_delete_update_user import GetDeleteUpdateUser
 from car_app.views.get_users import GetUsers
+from car_app.views.email_verification import VerifyEmail
+from car_app.views.email_verification import SendEmailVerificationLink
 
 
 urlpatterns = [
-    path('api/register/marketer/', MarketerRegistrationView.as_view(),
+    path('api/register-marketer/', MarketerRegistrationView.as_view(),
          name='marketer_registration'),
-    path('api/register/marketer', MarketerRegistrationView.as_view(),
+    path('api/register-marketer', MarketerRegistrationView.as_view(),
          name='marketer_registration'),
     path('api/login/', UserLogin.as_view(), name='login_user'),
     path('api/login', UserLogin.as_view(), name='login_user'),
@@ -23,4 +25,8 @@ urlpatterns = [
     path('api/user/<str:pk>', GetDeleteUpdateUser.as_view(), name='get_delete_update_user'),
     path('api/users/', GetUsers.as_view(), name='get_users'),
     path('api/users', GetUsers.as_view(), name='get_users'),
+    path('api/verify-email/', VerifyEmail.as_view(), name='email_verify'),
+    path('api/verify-email', VerifyEmail.as_view(), name='email_verify'),
+    path('api/send-email', SendEmailVerificationLink.as_view(), name='send_email_link'),
+    path('api/send-email', SendEmailVerificationLink.as_view(), name='send_email-link'),
 ]

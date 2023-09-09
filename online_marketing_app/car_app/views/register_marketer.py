@@ -18,16 +18,23 @@ class MarketerRegistrationView(APIView):
         """
         hashed_password = password_hasher(validated_data)
         validated_data['password'] = hashed_password
-        validated_data['is_staff'] = True
+        validated_data['is_marketer'] = True
+
+        referral_code = validated_data.get('referral_code')
 
         try:
+            if referral_code is not None:
+                team_manager = User.objects.get(manager_code=referral_code)
+                validated_data['team_manager'] = team_manager
             user = User(**validated_data)
             user.save()
-            message = f'Account for {user.username} was created successfully.'
-            return JsonResponse({'message': message}, status=201)
+            return JsonResponse({'message': 'Account created successfully.'}, status=201)
+        except User.DoesNotExist: #pylint: disable=no-member
+            error_message = 'Invalid referral code, remove field if not certain.'
+            return JsonResponse({'error': error_message}, status=400)
         except IntegrityError as error:
             if 'email' in str(error):
-                return JsonResponse({'error': 'Email not available'}, status=400)
+                return JsonResponse({'error': 'Email not available.'}, status=400)
             if 'username' in str(error):
                 return JsonResponse({'error': 'Username not available.'}, status=400)
         except BaseException as error: # pylint: disable=broad-exception-caught

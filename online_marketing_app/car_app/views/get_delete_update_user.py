@@ -51,7 +51,6 @@ class GetDeleteUpdateUser(APIView):
         if request.content_type != 'application/json':
             return JsonResponse({'error': 'The Content-Type must be json.'}, status=415)
 
-        #auth_header = request.META.get('HTTP_AUTHORIZATION')
         result = decode_token(request)
         refresh = request.data.get('refresh')
 
