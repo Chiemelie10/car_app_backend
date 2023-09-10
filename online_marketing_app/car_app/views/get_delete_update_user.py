@@ -3,8 +3,8 @@
 #import jwt
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
 from django.http import JsonResponse
 from car_app.views.views_helper_functions import decode_token
 from car_app.models import User
@@ -52,26 +52,33 @@ class GetDeleteUpdateUser(APIView):
             return JsonResponse({'error': 'The Content-Type must be json.'}, status=415)
 
         result = decode_token(request)
-        refresh = request.data.get('refresh')
-
-        if refresh is None:
-            return JsonResponse({'error': 'Refresh token is required.'})
 
         if isinstance(result, tuple):
             user_id, is_superuser = result
+
+            try:
+                user = User.objects.get(id=pk)
+            except User.DoesNotExist:
+                error_message = 'User not found.'
+                return JsonResponse({'error': error_message}, status=400)
+
+            manager = user.team_manager if hasattr(user, 'team_manager') else None
+            manager = True if manager.id == user_id else False
+
+            if manager is True or is_superuser is True or user_id == pk:
+                try:
+                    outstanding_tokens = OutstandingToken.objects.filter(user=user)
+                    for token in outstanding_tokens:
+                        BlacklistedToken.objects.create(token=token)
+                except BaseException as error: # pylint: disable=broad-exception-caught
+                    return JsonResponse({'error': str(error)}, status=500)
+                user.delete()
+                message = f'Account for {user.username} has been deleted successfully.'
+                return JsonResponse({'message': message}, status=200)
+
+            if user_id != pk:
+                error_message = 'You do not have the permission to perform this action.'
+                return JsonResponse({'error': error_message}, status=403)
         else:
             error_message = result
             return error_message
-
-        if is_superuser is True or user_id == pk:
-            try:
-                token = RefreshToken(refresh)
-                token.blacklist()
-            except BaseException as error: # pylint: disable=broad-exception-caught
-                return JsonResponse({'error': str(error)}, status=400)
-            user_queryset = User.objects.get(pk=pk)
-            user_queryset.delete()
-            message = f'Account for {user_queryset.username} has been deleted successfully.'
-            return JsonResponse({'message': message}, status=200)
-        if user_id != pk:
-            return JsonResponse({'error': 'Unauthorized.'}, status=401)
