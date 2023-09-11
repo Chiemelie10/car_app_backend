@@ -25,5 +25,7 @@ urlpatterns = [
     path('', include('car_app.urls')),
 ]
 
+admin.site.site_header = 'CarAutosNG'
+
 # pylint: disable=invalid-name
 handler404 = 'car_app.views.exception_handlers.page_not_found.custom_404_view'

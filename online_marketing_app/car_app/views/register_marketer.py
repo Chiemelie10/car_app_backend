@@ -1,7 +1,6 @@
 """This module defines the class MarketerRegisterationView."""
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAdminUser
-#from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.db.utils import IntegrityError
@@ -13,7 +12,6 @@ from car_app.models import User
 class MarketerRegistrationView(APIView):
     """Defines a method for creating a new user(marketer)."""
 
-    #authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
 
     @method_decorator(validate_user)
