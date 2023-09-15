@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-from os import getenv
+from os import getenv, path
 from datetime import timedelta
 from dotenv import load_dotenv
 
@@ -47,6 +47,13 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
+    'car_advert',
+    'car_brand',
+    'car_model',
+    'car_manufacture_year',
+    'state',
+    'city',
+    'image',
 ]
 
 REST_FRAMEWORK = {
@@ -169,3 +176,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = email_host_user
 #EMAIL_HOST_PASSWORD = email_host_password
 EMAIL_HOST_PASSWORD = 'jlhfxffrnlygnwbt'
+
+# Path for storing of images
+MEDIA_URL = '/media/'
+MEDIA_ROOT = path.join(BASE_DIR, 'media')

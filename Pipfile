@@ -13,6 +13,7 @@ bcrypt = "*"
 django-cors-headers = "*"
 djangorestframework-simplejwt = "*"
 pyjwt = "*"
+pillow = "*"
 
 [dev-packages]
 
