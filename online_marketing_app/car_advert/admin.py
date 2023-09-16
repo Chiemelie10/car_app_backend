@@ -17,6 +17,11 @@ class CarAdvertModelAdmin(admin.ModelAdmin):
     inlines = [
         ImageInline,
     ]
+    search_fields = ('id', 'fuel_type')
+    list_filter = ('is_active', 'year', 'fuel_type')
+    ordering = ('created_at',)
+    list_display = ('id', 'is_active', 'brand', 'model', 'year', 'user')
+    
     fieldsets = (
         (None, {'fields': ('thumbnail',)}),
         (None, {'fields': ('title', 'description', 'price', 'fuel_type', 'brand',

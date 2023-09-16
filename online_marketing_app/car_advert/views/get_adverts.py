@@ -11,6 +11,7 @@ class GetAdverts(APIView):
     of CarAdvert in the database.
     """
     # pylint: disable=unused-argument
+
     def get(self, request):
         """
         This method returns all instances of the CarAdvert module that

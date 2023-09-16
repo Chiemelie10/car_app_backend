@@ -12,9 +12,6 @@ from car_app.serializers.user_serializer import GetUserSerializer
 #from dotenv import load_dotenv
 
 
-#load_dotenv()
-
-
 class GetDeleteUpdateUser(APIView):
     """
     This class defines methods to get, delete or update user data
@@ -22,6 +19,7 @@ class GetDeleteUpdateUser(APIView):
     """
     # pylint: disable=invalid-name
     # pylint: disable=no-member
+    # pylint: disable=unused-argument
 
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
@@ -32,9 +30,6 @@ class GetDeleteUpdateUser(APIView):
         database. It also returns a status code of 400 if provided id fails to
         match any of the ids in the database.
         """
-        if request.content_type != 'application/json':
-            return JsonResponse({'error': 'The Content-Type must be json.'}, status=415)
-
         try:
             user_queryset = User.objects.get(pk=pk)
             serializer = GetUserSerializer(user_queryset)
@@ -48,9 +43,6 @@ class GetDeleteUpdateUser(APIView):
         It also returns an error status code of 400 if provided id fails to
         match any of the ids in the database.
         """
-        if request.content_type != 'application/json':
-            return JsonResponse({'error': 'The Content-Type must be json.'}, status=415)
-
         result = decode_token(request)
 
         if isinstance(result, tuple):
@@ -72,8 +64,9 @@ class GetDeleteUpdateUser(APIView):
                         BlacklistedToken.objects.create(token=token)
                 except BaseException as error: # pylint: disable=broad-exception-caught
                     return JsonResponse({'error': str(error)}, status=500)
-                user.delete()
+
                 message = f'Account for {user.username} has been deleted successfully.'
+                user.delete()
                 return JsonResponse({'message': message}, status=200)
 
             if user_id != pk:

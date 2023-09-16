@@ -10,14 +10,13 @@ class GetUsers(APIView):
     This class defines a method to get all registered
     users of the application.
     """
+    # pylint: disable=unused-argument
+
     def get(self, request):
         """
         This method returns all registered users. It also returns
         an empty list if no user is found.
         """
-        if request.content_type != 'application/json':
-            return JsonResponse({'error': 'The Content-Type must be json.'}, status=415)
-
         users = User.objects.all()
 
         if users.exists():
