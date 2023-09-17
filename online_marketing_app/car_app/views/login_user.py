@@ -33,6 +33,7 @@ class UserLogin(APIView):
         refresh = RefreshToken.for_user(user)
         refresh['username'] = user.username
         refresh['is_superuser'] = user.is_superuser
+        refresh['is_manager'] = user.is_manager
         access = str(refresh.access_token)
 
         response = JsonResponse({'access': access}, status=200)

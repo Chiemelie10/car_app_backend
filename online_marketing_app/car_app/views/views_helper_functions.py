@@ -40,13 +40,14 @@ def decode_token(request):
             decoded_token = jwt.decode(token, secret_key, algorithms=['HS256'])
             user_id = decoded_token.get('user_id')
             is_superuser = decoded_token.get('is_superuser')
-            return user_id, is_superuser
+            is_manager = decoded_token.get('is_manager')
+            return user_id, is_superuser, is_manager
         except jwt.ExpiredSignatureError:
             return JsonResponse({'error': 'The token has expired.'}, status=401)
         except jwt.DecodeError:
             return JsonResponse({'error': 'The token is invalid.'}, status=401)
         except BaseException as error: # pylint: disable=broad-exception-caught
-            return JsonResponse({'error': str(error)})
+            return JsonResponse({'error': str(error)}, status=401)
     else:
         return JsonResponse({'error': 'Authorization header is required.'}, status=401)
 
@@ -70,6 +71,6 @@ def decode_access_token(request):
         except jwt.DecodeError:
             return JsonResponse({'error': 'The token is invalid.'}, status=401)
         except BaseException as error: # pylint: disable=broad-exception-caught
-            return JsonResponse({'error': str(error)})
+            return JsonResponse({'error': str(error)}, status=401)
     else:
         return JsonResponse({'error': 'Authorization header is required.'}, status=401)

@@ -1,15 +1,12 @@
 """This module defines the class GetDeleteUpdateUser."""
-#from os import getenv
-#import jwt
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
 from django.http import JsonResponse
-from car_app.views.views_helper_functions import decode_token
+from car_app.views.views_helper_functions import decode_token, password_hasher
 from car_app.models import User
-from car_app.serializers.user_serializer import GetUserSerializer
-#from dotenv import load_dotenv
+from car_app.serializers.user_serializer import GetUserSerializer, UserModelSerializer
 
 
 class GetDeleteUpdateUser(APIView):
@@ -46,7 +43,7 @@ class GetDeleteUpdateUser(APIView):
         result = decode_token(request)
 
         if isinstance(result, tuple):
-            user_id, is_superuser = result
+            user_id, is_superuser, _ = result
 
             try:
                 user = User.objects.get(id=pk)
@@ -68,6 +65,81 @@ class GetDeleteUpdateUser(APIView):
                 message = f'Account for {user.username} has been deleted successfully.'
                 user.delete()
                 return JsonResponse({'message': message}, status=200)
+
+            if user_id != pk:
+                error_message = 'You do not have the permission to perform this action.'
+                return JsonResponse({'error': error_message}, status=403)
+        else:
+            error_message = result
+            return error_message
+
+    def put(self, request, pk):
+        """
+        This method updates the user data if the provided data matches
+        any in the database.
+        """
+        if request.content_type != 'application/json':
+            return JsonResponse({'error': 'Content-Type must be json.'}, status=415)
+
+        result = decode_token(request)
+
+        if isinstance(result, tuple):
+            user_id, is_superuser, is_manager = result
+
+            try:
+                user = User.objects.get(id=pk)
+            except User.DoesNotExist:
+                return JsonResponse({'error': 'User not found.'}, status=400)
+
+            manager = user.team_manager if hasattr(user, 'team_manager') else None
+            if manager:
+                manager = True if manager.id == user_id else False
+
+            if manager is True or is_superuser is True or user_id == pk:
+                serializer = UserModelSerializer(user, data=request.data, partial=True)
+
+                if serializer.is_valid():
+                    valid_data = serializer.validated_data
+
+                    if user_id == pk and is_superuser is False and is_manager is False:
+                        uneditable_fields = ('is_superuser', 'is_manager', 'is_staff',
+                                             'is_active', 'is_marketer', 'is_verified',
+                                             'referral_code', 'team_manager', 'groups',
+                                             'user_permissions')
+                        for field in uneditable_fields:
+                            if field in valid_data:
+                                error_message = 'You do not have the permission '\
+                                                'to perform this action.'
+                                return JsonResponse({'error': error_message}, status=403)
+
+                    if manager is True and is_superuser is False:
+                        uneditable_fields = ('is_superuser', 'is_manager', 'is_staff')
+                        for field in uneditable_fields:
+                            if field in valid_data:
+                                error_message = 'You do not have the permission '\
+                                                'to perform this action.'
+                                return JsonResponse({'error': error_message}, status=403)
+
+                    if user_id == pk and is_manager is True and is_superuser is False:
+                        uneditable_fields = ('is_superuser', 'is_manager', 'is_staff')
+                        for field in uneditable_fields:
+                            if field in valid_data:
+                                error_message = 'You do not have the permission '\
+                                                'to perform this action.'
+                                return JsonResponse({'error': error_message}, status=403)
+
+                    if 'password' in valid_data:
+                        hashed_password = password_hasher(valid_data)
+                        valid_data['password'] = hashed_password
+
+                    for attr, value in valid_data.items():
+                        setattr(user, attr, value)
+
+                    user.save()
+                    serializer = GetUserSerializer(user)
+                    return JsonResponse(serializer.data, status=200)
+
+                return JsonResponse(serializer.errors, status=400)
 
             if user_id != pk:
                 error_message = 'You do not have the permission to perform this action.'

@@ -11,7 +11,6 @@ class ImageInline(admin.TabularInline):
     extra = 1
 
 
-
 class CarAdvertModelAdmin(admin.ModelAdmin):
     """This class configures the CarAdvertModelAdmin."""
     inlines = [
@@ -21,7 +20,6 @@ class CarAdvertModelAdmin(admin.ModelAdmin):
     list_filter = ('is_active', 'year', 'fuel_type')
     ordering = ('created_at',)
     list_display = ('id', 'is_active', 'brand', 'model', 'year', 'user')
-    
     fieldsets = (
         (None, {'fields': ('thumbnail',)}),
         (None, {'fields': ('title', 'description', 'price', 'fuel_type', 'brand',
