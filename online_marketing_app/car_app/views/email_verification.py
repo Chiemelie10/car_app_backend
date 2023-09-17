@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from dotenv import load_dotenv
 from car_app.models import User
-from car_app.views.views_helper_functions import decode_access_token
+from car_app.views.views_helper_functions import decode_token
 from car_app.utils import Util
 
 
@@ -57,10 +57,10 @@ class SendEmailVerificationLink(APIView):
         if request.content_type != 'application/json':
             return JsonResponse({'error': 'The Content-Type must be json.'})
 
-        result = decode_access_token(request)
+        result = decode_token(request)
 
-        if isinstance(result, str):
-            user_id = result
+        if isinstance(result, tuple):
+            user_id, _, _, = result
         else:
             return result
 

@@ -50,27 +50,3 @@ def decode_token(request):
             return JsonResponse({'error': str(error)}, status=401)
     else:
         return JsonResponse({'error': 'Authorization header is required.'}, status=401)
-
-
-def decode_access_token(request):
-    """
-    This decodes a jwt token from the Authorization header of a request and
-    returns the value of user_id.
-    """
-    auth_header = request.META.get('HTTP_AUTHORIZATION')
-
-    if auth_header:
-        token = auth_header.split(' ')[1]
-        secret_key = getenv('PROJECT_SECRET_KEY')
-        try:
-            decoded_token = jwt.decode(token, secret_key, algorithms=['HS256'])
-            user_id = decoded_token.get('user_id')
-            return user_id
-        except jwt.ExpiredSignatureError:
-            return JsonResponse({'error': 'The token has expired.'}, status=401)
-        except jwt.DecodeError:
-            return JsonResponse({'error': 'The token is invalid.'}, status=401)
-        except BaseException as error: # pylint: disable=broad-exception-caught
-            return JsonResponse({'error': str(error)}, status=401)
-    else:
-        return JsonResponse({'error': 'Authorization header is required.'}, status=401)
