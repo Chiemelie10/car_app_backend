@@ -6,13 +6,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.http import JsonResponse
 from car_advert.models import CarAdvert
 from car_advert.serializers import CarAdvertSerializer
-from car_brand.models import CarBrand
-from car_model.models import CarModel
-from car_manufacture_year.models import ManufactureYear
-from car_app.models import User
 from car_app.views.views_helper_functions import decode_token
-from state.models import State
-from city.models import City
 
 
 class GetDeleteUpdateAdvert(APIView):
@@ -56,10 +50,11 @@ class GetDeleteUpdateAdvert(APIView):
         result = decode_token(request)
 
         if isinstance(result, tuple):
-            user_id, is_superuser = result
+            user_id, is_superuser, _ = result
 
             manager = user.team_manager if hasattr(user, 'team_manager') else None
-            manager = True if manager.id == user_id else False
+            if manager:
+                manager = True if manager.id == user_id else False
 
             if manager is True or is_superuser is True or user_id == advert_user_id:
                 message = f'Advert {advert.id} deleted successfully.'
@@ -86,57 +81,55 @@ class GetDeleteUpdateAdvert(APIView):
         result = decode_token(request)
 
         if isinstance(result, tuple):
-            user_id, is_superuser = result
+            user_id, is_superuser, is_manager = result
 
             manager = user.team_manager if hasattr(user, 'team_manager') else None
-            manager = True if manager.id == user_id else False
+            if manager:
+                manager = True if manager.id == user_id else False
 
             if manager is True or is_superuser is True or user_id == advert_user_id:
                 serializer = CarAdvertSerializer(advert, data=request.data, partial=True)
 
                 if serializer.is_valid():
                     valid_data = serializer.validated_data
-                    if 'brand' in valid_data:
-                        try:
-                            brand = CarBrand.objects.get(id=valid_data['brand'])
-                            valid_data['brand'] = brand
-                        except CarBrand.DoesNotExist:
-                            return JsonResponse({'error': 'Brand not found.'}, status=400)
 
-                    if 'model' in valid_data:
-                        try:
-                            model = CarModel.objects.get(id=valid_data['model'])
-                            valid_data['model'] = model
-                        except CarModel.DoesNotExist:
-                            return JsonResponse({'error': 'Model not found.'}, status=400)
+                    if user_id == advert_user_id and is_superuser is False and is_manager is False:
+                        uneditable_fields = ('user',)
+                        for field in uneditable_fields:
+                            if field in valid_data:
+                                error_message = 'You do not have the permission '\
+                                                'to perform this action.'
+                                return JsonResponse({'error': error_message}, status=403)
 
-                    if 'year' in valid_data:
-                        try:
-                            year = ManufactureYear.objects.get(id=valid_data['year'])
-                            valid_data['year'] = year
-                        except CarModel.DoesNotExist:
-                            return JsonResponse({'error': 'Year not found.'}, status=400)
+                    if 'city' in valid_data and 'state' in valid_data:
+                        city = valid_data['city']
+                        state = valid_data['state']
+                        cities = state.cities.all()
+                        if city not in cities:
+                            return JsonResponse({'error': 'Provided city not in state.'},
+                                                status=400)
 
-                    if 'state' in valid_data:
-                        try:
-                            state = State.objects.get(id=valid_data['state'])
-                            valid_data['state'] = state
-                        except CarModel.DoesNotExist:
-                            return JsonResponse({'error': 'State not found.'}, status=400)
+                    if 'city' in valid_data and 'state' not in valid_data:
+                        city = valid_data['city']
+                        state = advert.state
+                        if state != city.state:
+                            return JsonResponse({'error': 'Provided city not in state.'},
+                                                status=400)
 
-                    if 'city' in valid_data:
-                        try:
-                            city = City.objects.get(id=valid_data['city'])
-                            valid_data['city'] = city
-                        except City.DoesNotExist:
-                            return JsonResponse({'error': 'City not found.'}, status=400)
+                    if 'model' in valid_data and 'brand' in valid_data:
+                        model = valid_data['model']
+                        brand = valid_data['brand']
+                        brand_models = brand.brand_models.all()
+                        if model not in brand_models:
+                            return JsonResponse({'error': 'Provided car model not in car brand.'},
+                                                status=400)
 
-                    if 'user' in valid_data:
-                        try:
-                            user = User.objects.get(id=valid_data['user'])
-                            valid_data['user'] = user
-                        except User.DoesNotExist:
-                            return JsonResponse({'error': 'User not found.'})
+                    if 'model' in valid_data and 'brand' not in valid_data:
+                        model = valid_data['model']
+                        brand = advert.brand
+                        if brand != model.brand:
+                            return JsonResponse({'error': 'Provided car model not in car brand.'},
+                                                status=400)
 
                     for attr, value in valid_data.items():
                         setattr(advert, attr, value)

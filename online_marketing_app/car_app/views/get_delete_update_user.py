@@ -53,7 +53,8 @@ class GetDeleteUpdateUser(APIView):
                 return JsonResponse({'error': error_message}, status=400)
 
             manager = user.team_manager if hasattr(user, 'team_manager') else None
-            manager = True if manager.id == user_id else False
+            if manager:
+                manager = True if manager.id == user_id else False
 
             if manager is True or is_superuser is True or user_id == pk:
                 try:
