@@ -28,7 +28,10 @@ class UserAdminConfig(UserAdmin):
     )
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        """Overrode to make the team_manager field to show only users that are managers."""
+        """
+        Overrode this method to make the team_manager field to show only users
+        that are managers.
+        """
         if db_field.name == 'team_manager':
             kwargs['queryset'] = User.objects.filter(is_manager=True)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)

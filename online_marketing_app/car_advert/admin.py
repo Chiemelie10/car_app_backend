@@ -5,14 +5,36 @@ from car_advert.models import CarAdvert
 from image.models import Image
 
 
-# class CarAdvertAdminForm(forms.ModelForm):
-#     class Meta:
-#         model = CarAdvert
-#         fields = '__all__'
-    
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.fields['images'].widget = forms.ClearableFileInput(attrs={'multiple': True})
+class CarAdvertAdminForm(forms.ModelForm):
+    """
+    Inherited Django's built in form to implement custom validation logic.
+    """
+    class Meta:
+        """
+        model: The name of the model in the form.
+        fields: fields of the named model.
+        """
+        model = CarAdvert
+        fields = '__all__'
+
+    def clean(self):
+        """
+        This method in a Django form is responsible for validating and cleaning
+        the form data before it is saved to the database.
+        """
+        cleaned_data = super().clean()
+        brand = cleaned_data.get('brand')
+        model = cleaned_data.get('model')
+        state = cleaned_data.get('state')
+        city = cleaned_data.get('city')
+
+        if brand and model:
+            if model.brand != brand:
+                raise forms.ValidationError('Provided car model must have a matching car brand.')
+
+        if state and city:
+            if city.state != state:
+                raise forms.ValidationError('Provided city must have a matching state.')
 
 
 class ImageInline(admin.StackedInline):
@@ -27,6 +49,7 @@ class CarAdvertModelAdmin(admin.ModelAdmin):
     inlines = [
         ImageInline,
     ]
+    form = CarAdvertAdminForm
     search_fields = ('id', 'fuel_type')
     list_filter = ('is_active', 'year', 'fuel_type')
     ordering = ('created_at',)
