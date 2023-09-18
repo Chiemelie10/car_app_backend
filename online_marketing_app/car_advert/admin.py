@@ -1,14 +1,25 @@
 """This module defines class CarAdvertModelAdmin"""
+from django import forms
 from django.contrib import admin
 from car_advert.models import CarAdvert
 from image.models import Image
 
 
-class ImageInline(admin.TabularInline):
+# class CarAdvertAdminForm(forms.ModelForm):
+#     class Meta:
+#         model = CarAdvert
+#         fields = '__all__'
+    
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         self.fields['images'].widget = forms.ClearableFileInput(attrs={'multiple': True})
+
+
+class ImageInline(admin.StackedInline):
     """th"""
     model = Image
-    fields = ('image', 'is_thumbnail')
-    extra = 1
+    #fields = ('image',)
+    extra = 0
 
 
 class CarAdvertModelAdmin(admin.ModelAdmin):

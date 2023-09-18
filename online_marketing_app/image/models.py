@@ -8,7 +8,8 @@ class Image(models.Model):
     advertisement = models.ForeignKey(CarAdvert, related_name='images',
                                       on_delete=models.CASCADE)
     image = models.ImageField(upload_to='advertisement_images')
-    is_thumbnail = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         """db_table: Defines the name of the model in the database."""

@@ -37,5 +37,4 @@ class GetUserSerializer(serializers.ModelSerializer):
     class Meta:
         """Defines the fields of the model that will be serialized."""
         model = User
-        #exclude = ('password',)
-        fields = '__all__'
+        exclude = ('password',)

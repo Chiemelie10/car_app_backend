@@ -1,6 +1,7 @@
 """This module defines the models of the car app"""
 from uuid import uuid4
 from django.db import models
+from django.core.validators import MinLengthValidator
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from car_app.custom_user_manager import CustomUserManager
 
@@ -12,6 +13,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=100, unique=True)
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=100)
+    phone_number = models.CharField(max_length=11, default='', blank=True,
+                                    validators=[MinLengthValidator(limit_value=11)])
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)

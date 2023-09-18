@@ -1,4 +1,4 @@
-"""This module defines class GetAdvert."""
+"""This module defines class GetAdverts."""
 from rest_framework.views import APIView
 from django.http import JsonResponse
 from car_advert.models import CarAdvert

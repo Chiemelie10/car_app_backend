@@ -6,6 +6,7 @@ from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, Ou
 from django.http import JsonResponse
 from car_app.views.views_helper_functions import decode_token, password_hasher
 from car_app.models import User
+from car_app.utils import generate_ref_code
 from car_app.serializers.user_serializer import GetUserSerializer, UserModelSerializer
 
 
@@ -131,6 +132,39 @@ class GetDeleteUpdateUser(APIView):
                     if 'password' in valid_data:
                         hashed_password = password_hasher(valid_data)
                         valid_data['password'] = hashed_password
+
+                    if 'is_manager' in valid_data:
+                        value = valid_data['is_manager']
+                        if value is True:
+                            code = generate_ref_code()
+                            setattr(user, 'manager_code', code)
+                            setattr(user, 'team_manager', None)
+                            setattr(user, 'is_staff', True)
+                        else:
+                            setattr(user, 'manager_code', None)
+                            setattr(user, 'is_staff', False)
+                            users = user.managed_users.all()
+                            for managed_user in users:
+                                setattr(managed_user, 'team_manager', None)
+                                setattr(managed_user, 'referral_code', None)
+                                managed_user.save()
+
+                    if 'referral_code' in valid_data:
+                        referral_code = valid_data['referral_code']
+                        try:
+                            manager = User.objects.get(manager_code=referral_code)
+                            setattr(user, 'team_manager', manager)
+                        except User.DoesNotExist:
+                            return JsonResponse({'error': 'Invalid referral code.'}, status=400)
+
+                    if 'team_manager' in valid_data:
+                        manager = valid_data['team_manager']
+                        referral_code = manager.manager_code
+                        if not referral_code:
+                            return JsonResponse({'error': f'User {manager.id} not a manager.'},
+                                                status=400)
+                        if referral_code:
+                            setattr(user, 'referral_code', referral_code)
 
                     for attr, value in valid_data.items():
                         setattr(user, attr, value)
