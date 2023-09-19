@@ -25,7 +25,7 @@ class CarAdvert(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
     price = models.DecimalField(decimal_places=2, max_digits=13)
-    thumbnail = models.ImageField(upload_to='thumbnail', blank=True)
+    thumbnail = models.ImageField(upload_to='thumbnail', blank=True, null=True, default='')
     fuel_type = models.CharField(choices=FUEL_TYPE_CHOICES, max_length=100)
     brand = models.ForeignKey(CarBrand, related_name='adverts', on_delete=models.CASCADE)
     model = models.ForeignKey(CarModel, related_name='adverts', on_delete=models.CASCADE)

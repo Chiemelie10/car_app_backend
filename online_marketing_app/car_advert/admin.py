@@ -1,4 +1,4 @@
-"""This module defines class CarAdvertModelAdmin"""
+"""This module defines class CarAdvertModelAdmin."""
 from django import forms
 from django.contrib import admin
 from car_advert.models import CarAdvert
@@ -37,11 +37,14 @@ class CarAdvertAdminForm(forms.ModelForm):
                 raise forms.ValidationError('Provided city must have a matching state.')
 
 
-class ImageInline(admin.StackedInline):
+class ImageInline(admin.TabularInline):
     """th"""
     model = Image
     #fields = ('image',)
-    extra = 0
+    extra = 1
+    exclude = ('advertisement_images',)
+    readonly_fields = ('id',)
+    # classes = ['collapse']
 
 
 class CarAdvertModelAdmin(admin.ModelAdmin):

@@ -2,7 +2,7 @@
 from rest_framework.views import APIView
 from django.http import JsonResponse
 from car_advert.models import CarAdvert
-from image.serializer import ImageModelSerializer
+from image.serializers import ImageModelSerializer
 
 
 class ImagesByAdvert(APIView):

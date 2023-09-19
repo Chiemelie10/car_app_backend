@@ -5,9 +5,10 @@ from car_advert.models import CarAdvert
 
 class Image(models.Model):
     """This class defines the fields of the model."""
-    advertisement = models.ForeignKey(CarAdvert, related_name='images',
+    car_advert = models.ForeignKey(CarAdvert, related_name='images',
                                       on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='advertisement_images')
+    image = models.ImageField(upload_to='advertisement_images', default='',
+                              null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

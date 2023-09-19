@@ -7,11 +7,14 @@ from car_advert.views.get_adverts_by_model import AdvertsByModel
 from car_advert.views.get_adverts_by_manufacture_year import AdvertsByManufactureYear
 from car_advert.views.get_adverts_by_state import AdvertsByState
 from car_advert.views.get_images_by_advert import ImagesByAdvert
+from car_advert.views.post_advert import PostAdvert
 
 
 urlpatterns = [
     path('api/adverts/', GetAdverts.as_view(), name='get-adverts'),
     path('api/adverts', GetAdverts.as_view(), name='get-adverts'),
+    path('api/create-advert/', PostAdvert.as_view(), name='post-advert'),
+    path('api/create-advert', PostAdvert.as_view(), name='post-advert'),
     path('api/adverts/<str:pk>/', GetDeleteUpdateAdvert.as_view(),
          name='get-delete-update-adverts'),
     path('api/adverts/<str:pk>', GetDeleteUpdateAdvert.as_view(),
