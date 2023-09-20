@@ -175,8 +175,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 FMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = email_host_user
-#EMAIL_HOST_PASSWORD = email_host_password
-EMAIL_HOST_PASSWORD = 'jlhfxffrnlygnwbt'
+EMAIL_HOST_PASSWORD = email_host_password
 
 # Path for storing of images
 MEDIA_URL = '/media/'
