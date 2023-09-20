@@ -1,0 +1,11 @@
+django
+python-dotenv
+mysqlclient
+djangorestframework
+beautifulsoup4
+bcrypt
+django-cors-headers
+djangorestframework-simplejwt
+pyjwt
+pillow
+gunicorn
