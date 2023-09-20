@@ -8,6 +8,7 @@ from car_app.views.views_helper_functions import decode_token, password_hasher
 from car_app.models import User
 from car_app.utils import generate_ref_code
 from car_app.serializers.user_serializer import GetUserSerializer, UserModelSerializer
+from user_activity.models import UserActivity
 
 
 class GetDeleteUpdateUser(APIView):
@@ -54,9 +55,9 @@ class GetDeleteUpdateUser(APIView):
 
             manager = user.team_manager if hasattr(user, 'team_manager') else None
             if manager:
-                manager = True if manager.id == user_id else False
+                user_manager = True if manager.id == user_id else False
 
-            if manager is True or is_superuser is True or user_id == pk:
+            if user_manager is True or is_superuser is True or user_id == pk:
                 try:
                     outstanding_tokens = OutstandingToken.objects.filter(user=user)
                     for token in outstanding_tokens:
@@ -64,8 +65,25 @@ class GetDeleteUpdateUser(APIView):
                 except BaseException as error: # pylint: disable=broad-exception-caught
                     return JsonResponse({'error': str(error)}, status=500)
 
+                if is_superuser is True:
+                    try:
+                        action_performing_user = User.objects.get(id=user_id)
+                    except User.DoesNotExist:
+                        return JsonResponse({'error': 'Provided token has no valid user.'}, 401)
+                elif user_manager is True:
+                    action_performing_user = manager
+                else:
+                    action_performing_user = user
+
+                UserActivity.objects.create(
+                    user = action_performing_user,
+                    activity_type = 'Delete',
+                    activity_details = f'Deleted user: {user.id}',
+                )
+
                 message = f'Account for {user.username} has been deleted successfully.'
                 user.delete()
+
                 return JsonResponse({'message': message}, status=200)
 
             if user_id != pk:
@@ -95,9 +113,9 @@ class GetDeleteUpdateUser(APIView):
 
             manager = user.team_manager if hasattr(user, 'team_manager') else None
             if manager:
-                manager = True if manager.id == user_id else False
+                user_manager = True if manager.id == user_id else False
 
-            if manager is True or is_superuser is True or user_id == pk:
+            if user_manager is True or is_superuser is True or user_id == pk:
                 serializer = UserModelSerializer(user, data=request.data, partial=True)
 
                 if serializer.is_valid():
@@ -114,7 +132,7 @@ class GetDeleteUpdateUser(APIView):
                                                 'to perform this action.'
                                 return JsonResponse({'error': error_message}, status=403)
 
-                    if manager is True and is_superuser is False:
+                    if user_manager is True and is_superuser is False:
                         uneditable_fields = ('is_superuser', 'is_manager', 'is_staff')
                         for field in uneditable_fields:
                             if field in valid_data:
@@ -153,16 +171,16 @@ class GetDeleteUpdateUser(APIView):
                     if 'referral_code' in valid_data:
                         referral_code = valid_data['referral_code']
                         try:
-                            manager = User.objects.get(manager_code=referral_code)
-                            setattr(user, 'team_manager', manager)
+                            user_team_manager = User.objects.get(manager_code=referral_code)
+                            setattr(user, 'team_manager', user_team_manager)
                         except User.DoesNotExist:
                             return JsonResponse({'error': 'Invalid referral code.'}, status=400)
 
                     if 'team_manager' in valid_data:
-                        manager = valid_data['team_manager']
-                        referral_code = manager.manager_code
+                        team_manager = valid_data['team_manager']
+                        referral_code = team_manager.manager_code
                         if not referral_code:
-                            return JsonResponse({'error': f'User {manager.id} not a manager.'},
+                            return JsonResponse({'error': f'User {team_manager.id} not a manager.'},
                                                 status=400)
                         if referral_code:
                             setattr(user, 'referral_code', referral_code)
@@ -172,6 +190,23 @@ class GetDeleteUpdateUser(APIView):
 
                     user.save()
                     serializer = GetUserSerializer(user)
+
+                    if is_superuser is True:
+                        try:
+                            action_performing_user = User.objects.get(id=user_id)
+                        except User.DoesNotExist:
+                            return JsonResponse({'error': 'Provided token has no valid user.'}, 401)
+                    elif user_manager is True:
+                        action_performing_user = manager
+                    else:
+                        action_performing_user = user
+
+                    UserActivity.objects.create(
+                        user = action_performing_user,
+                        activity_type = 'Update',
+                        activity_details = f'Updated account: {user.id}'
+                    )
+
                     return JsonResponse(serializer.data, status=200)
 
                 return JsonResponse(serializer.errors, status=400)

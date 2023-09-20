@@ -26,9 +26,8 @@ def validate_user(func):
 
             if serializer.is_valid():
                 validated_data = serializer.validated_data
-                return func(validated_data, *args, **kwargs)
-            errors = serializer.errors
-            for key, value in errors.items():
-                return JsonResponse({key: value}, status=400)
-        return JsonResponse({'error': 'Method for the request must be POST'})
+                return func(request, validated_data, *args, **kwargs)
+
+            return JsonResponse(serializer.errors, status=400)
+        return JsonResponse({'error': 'Method for the request must be POST.'})
     return wrapper_function

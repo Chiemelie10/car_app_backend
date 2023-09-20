@@ -6,7 +6,9 @@ from django.http import JsonResponse
 from car_advert.models import CarAdvert
 from car_advert.serializers import CarAdvertSerializer
 from car_app.views.views_helper_functions import decode_token
+from car_app.models import User
 from image.models import Image
+from user_activity.models import UserActivity
 
 
 class PostAdvert(APIView):
@@ -25,6 +27,13 @@ class PostAdvert(APIView):
         if serializer.is_valid():
             validated_data = serializer.validated_data
             uploaded_images = validated_data.pop('uploaded_images')
+
+            if not uploaded_images or len(uploaded_images) < 5:
+                return JsonResponse({'error': 'Uploaded images cannot be less than 5.'},
+                                    status=400)
+            if len(uploaded_images) > 10:
+                return JsonResponse({'error': 'Uploaded images cannot be more than 10.'},
+                                    status=400)
 
             city = validated_data.get('city')
             state = validated_data.get('state')
@@ -51,18 +60,38 @@ class PostAdvert(APIView):
 
                 manager = user.team_manager if hasattr(user, 'team_manager') else None
                 if manager:
-                    manager = True if manager.id == user_id else False
+                    user_manager = True if manager.id == user_id else False
 
-                if manager is True or is_superuser is True:
+                if user_manager is True or is_superuser is True:
                     car_advert = CarAdvert(**validated_data)
                     car_advert.save()
 
                     for image in uploaded_images:
-                        Image.objects.create(car_advert=car_advert, image=image)
+                        try:
+                            Image.objects.create(car_advert=car_advert, image=image)
+                        except Exception as error: # pylint: disable=broad-exception-caught
+                            car_advert.delete()
+                            return JsonResponse({'error': str(error)}, status=400)
+
+                    if is_superuser is True:
+                        try:
+                            action_performing_user = User.objects.get(id=user_id)
+                        except User.DoesNotExist:
+                            return JsonResponse({'error': 'Provided token has no valid user.'}, 401)
+                    else:
+                        action_performing_user = manager
+
+                    UserActivity.objects.create(
+                        user = action_performing_user,
+                        activity_type = 'Create',
+                        activity_details = f'Advert user: {user.id} '\
+                                            f'\nAdvert ID: {car_advert.id}',
+                    )
+
                     serializer = CarAdvertSerializer(car_advert)
                     return JsonResponse(serializer.data, status=201)
 
-                if manager is False or manager is None:
+                if user_manager is False or manager is None:
                     error_message = 'You do not have the permission to perform this action.'
                     return JsonResponse({'error': error_message}, status=403)
         return JsonResponse(serializer.errors, status=400)

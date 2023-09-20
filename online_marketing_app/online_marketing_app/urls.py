@@ -26,6 +26,12 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('car_app.urls')),
     path('', include('car_advert.urls')),
+    path('', include('user_activity.urls')),
+    path('', include('state.urls')),
+    path('', include('city.urls')),
+    path('', include('car_model.urls')),
+    path('', include('car_manufacture_year.urls')),
+    path('', include('car_brand.urls')),
 ]
 
 if settings.DEBUG:

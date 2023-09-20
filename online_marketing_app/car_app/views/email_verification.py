@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 from car_app.models import User
 from car_app.views.views_helper_functions import decode_token
 from car_app.utils import Util
+from user_activity.models import UserActivity
 
 
 load_dotenv()
@@ -25,6 +26,8 @@ class VerifyEmail(APIView):
         in the database if successful, otherwise it returns a http status
         code of 400 with the corresponding error message.
         """
+        # pylint: disable=no-member
+
         token = request.GET.get('token')
         try:
             secret_key = getenv('PROJECT_SECRET_KEY')
@@ -33,6 +36,12 @@ class VerifyEmail(APIView):
             if user.is_verified is False:
                 user.is_verified = True
                 user.save()
+
+            UserActivity.objects.create(
+                user = user,
+                activity_type = 'Verification',
+            )
+
             return JsonResponse({'message': 'Email verified successfully.'}, status=200)
         except jwt.ExpiredSignatureError:
             return JsonResponse({'error': 'The link has expired.'}, status=400)

@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'state',
     'city',
     'image',
+    'user_activity',
 ]
 
 REST_FRAMEWORK = {

@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.contrib.auth import authenticate
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+from user_activity.models import UserActivity
 
 
 class UserLogin(APIView):
@@ -15,6 +16,8 @@ class UserLogin(APIView):
         It returns a http error code of 400 if the provided data
         for login is not found in the database.
         """
+        #pylint: disable=no-member
+
         if request.content_type != 'application/json':
             return JsonResponse({'error': 'The Content-Type must be json.'}, status=415)
 
@@ -41,5 +44,10 @@ class UserLogin(APIView):
 
         user.last_login = timezone.now()
         user.save()
+
+        UserActivity.objects.create(
+            user = user,
+            activity_type = 'Login',
+        )
 
         return response

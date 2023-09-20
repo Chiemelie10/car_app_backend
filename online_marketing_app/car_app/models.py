@@ -13,8 +13,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=100, unique=True)
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=100)
-    phone_number = models.CharField(max_length=11, default='', blank=True,
+    phone_number = models.CharField(max_length=11,
                                     validators=[MinLengthValidator(limit_value=11)])
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
