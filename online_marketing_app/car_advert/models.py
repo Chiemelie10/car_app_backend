@@ -20,7 +20,7 @@ FUEL_TYPE_CHOICES = (
 
 class CarAdvert(models.Model):
     """This class defines the fields of the model"""
-    id = models.CharField(default=str(uuid4()), primary_key=True,
+    id = models.CharField(default=uuid4, primary_key=True,
                           unique=True, editable=False, max_length=36)
     title = models.CharField(max_length=100)
     description = models.TextField()
