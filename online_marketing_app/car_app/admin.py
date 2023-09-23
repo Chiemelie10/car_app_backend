@@ -14,16 +14,17 @@ class UserAdminConfig(UserAdmin):
     list_display = ('id', 'username', 'is_verified', 'manager_code',
                     'referral_code', 'team_manager')
     fieldsets = (
-        (None, {'fields': ('username', 'email', 'phone_number', 'team_manager')}),
+        (None, {'fields': ('first_name', 'last_name', 'username', 'email',
+                           'phone_number', 'team_manager')}),
         ('Permissions', {'fields': ('is_staff', 'is_active', 'is_marketer',
                                     'is_superuser', 'is_verified', 'is_manager')}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('username', 'email', 'phone_number', 'password1', 'password2',
-                       'is_active', 'is_staff', 'is_manager', 'is_verified',
-                       'is_superuser', 'is_marketer', 'referral_code'),
+            'fields': ('first_name', 'last_name', 'username', 'email', 'phone_number',
+                       'password1', 'password2', 'is_active', 'is_staff', 'is_manager',
+                       'is_verified', 'is_superuser', 'is_marketer', 'referral_code'),
         }),
     )
 
