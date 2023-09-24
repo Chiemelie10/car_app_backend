@@ -17,20 +17,9 @@ class SearchAdvert(APIView):
         search_query = request.data.get('search', '')
 
         results = CarAdvert.objects.filter(is_active=True).raw(
-            'SELECT * FROM car_adverts WHERE MATCH (title, description, tag, fuel_type) '\
+            'SELECT * FROM car_adverts WHERE MATCH (title, description, tag) '\
             'AGAINST (%s)',[search_query]
         )
-
-        search_terms = search_query.split()
-
-        for result in results:
-            result.relevance_score = sum(
-                1 for term in search_terms if term in result.title or term in result.description \
-                or term in result.tag
-            )
-
-        sorted_results = sorted(results, key=lambda x: x.relevance_score, reverse=True)
-
-        serializer = CarAdvertSerializer(sorted_results, many=True)
+        serializer = CarAdvertSerializer(results, many=True)
 
         return JsonResponse(serializer.data, status=200, safe=False)
