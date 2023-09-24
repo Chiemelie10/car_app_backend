@@ -24,6 +24,7 @@ class CarAdvert(models.Model):
                           unique=True, editable=False, max_length=36)
     title = models.CharField(max_length=100)
     description = models.TextField()
+    tag = models.CharField(max_length=100, blank=True, null=True, editable=False)
     price = models.DecimalField(decimal_places=2, max_digits=13)
     thumbnail = models.ImageField(upload_to='thumbnail')
     fuel_type = models.CharField(choices=FUEL_TYPE_CHOICES, max_length=100)

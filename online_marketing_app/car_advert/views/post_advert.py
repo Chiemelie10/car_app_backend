@@ -61,8 +61,21 @@ class PostAdvert(APIView):
                 manager = user.team_manager if hasattr(user, 'team_manager') else None
                 if manager:
                     user_manager = True if manager.id == user_id else False
+                else:
+                    user_manager = False
 
-                if user_manager is True or is_superuser is True:
+                if user_manager is True or is_superuser is True or user_id == user.id:
+                    year = validated_data.get('year').year
+                    fuel_type = validated_data.get('fuel_type')
+                    brand_name = city.name
+                    model_name = model.name
+                    state_name = state.name
+                    city_name = city.name
+                    user_name = user.username
+
+                    validated_data['tag'] = f'{year}, {brand_name}, {model_name}, {fuel_type}, '\
+                                            f'{state_name}, {city_name}, {user_name}'
+
                     car_advert = CarAdvert(**validated_data)
                     car_advert.save()
 
@@ -78,13 +91,15 @@ class PostAdvert(APIView):
                             action_performing_user = User.objects.get(id=user_id)
                         except User.DoesNotExist:
                             return JsonResponse({'error': 'Provided token has no valid user.'}, 401)
-                    else:
+                    elif user_manager is True:
                         action_performing_user = manager
+                    else:
+                        action_performing_user = user
 
                     UserActivity.objects.create(
                         user = action_performing_user,
                         activity_type = 'Create',
-                        activity_details = f'Advert user: {user.id} '\
+                        activity_details = f'Advert owner: {user.id} '\
                                             f'\nAdvert ID: {car_advert.id}',
                     )
 

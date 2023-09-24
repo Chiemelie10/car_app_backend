@@ -70,4 +70,18 @@ class CarAdvertModelAdmin(admin.ModelAdmin):
         }),
     )
 
+    def save_model(self, request, obj, form, change):
+        """Overrode the CarAdvert save model to put data in the tag field."""
+        year = obj.year.year
+        brand_name = obj.brand.name
+        model_name = obj.model.name
+        state_name = obj.state.name
+        city_name = obj.city.name
+        user_name = obj.user.username
+        fuel_type = obj.fuel_type
+        obj.tag = f'{year}, {brand_name}, {model_name}, {fuel_type}, '\
+                    f'{state_name}, {city_name}, {user_name}'
+
+        return super().save_model(request, obj, form, change)
+
 admin.site.register(CarAdvert, CarAdvertModelAdmin)

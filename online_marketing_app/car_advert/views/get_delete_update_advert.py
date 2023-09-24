@@ -58,6 +58,8 @@ class GetDeleteUpdateAdvert(APIView):
             manager = user.team_manager if hasattr(user, 'team_manager') else None
             if manager:
                 user_manager = True if manager.id == user_id else False
+            else:
+                user_manager = False
 
             if user_manager is True or is_superuser is True or user_id == advert_user_id:
                 if is_superuser is True:
@@ -98,6 +100,7 @@ class GetDeleteUpdateAdvert(APIView):
         except CarAdvert.DoesNotExist:
             return JsonResponse({'error': 'Advert not found.'}, status=400)
 
+        # decode access token using the decode_token function
         result = decode_token(request)
 
         if isinstance(result, tuple):
@@ -106,14 +109,16 @@ class GetDeleteUpdateAdvert(APIView):
             manager = user.team_manager if hasattr(user, 'team_manager') else None
             if manager:
                 user_manager = True if manager.id == user_id else False
+            else:
+                user_manager = False
 
             if user_manager is True or is_superuser is True or user_id == advert_user_id:
                 serializer = CarAdvertSerializer(advert, data=request.data, partial=True)
 
                 if serializer.is_valid():
                     valid_data = serializer.validated_data
-                    uploaded_images = valid_data.pop('uploaded_images')
 
+                    # restrict only a marketer from updating the user(owner) of an advert.
                     if user_id == advert_user_id and is_superuser is False and is_manager is False:
                         uneditable_fields = ('user',)
                         for field in uneditable_fields:
@@ -122,6 +127,7 @@ class GetDeleteUpdateAdvert(APIView):
                                                 'to perform this action.'
                                 return JsonResponse({'error': error_message}, status=403)
 
+                    # Enforce state and city relationship in the car_adverts table.
                     if 'city' in valid_data and 'state' in valid_data:
                         city = valid_data['city']
                         state = valid_data['state']
@@ -130,6 +136,7 @@ class GetDeleteUpdateAdvert(APIView):
                             return JsonResponse({'error': 'Provided city not in state.'},
                                                 status=400)
 
+                    # Enforce state and city relationship in the car_adverts table.
                     if 'city' in valid_data and 'state' not in valid_data:
                         city = valid_data['city']
                         state = advert.state
@@ -137,6 +144,7 @@ class GetDeleteUpdateAdvert(APIView):
                             return JsonResponse({'error': 'Provided city not in state.'},
                                                 status=400)
 
+                    # Enforce brand and model relationship in the car_adverts table.
                     if 'model' in valid_data and 'brand' in valid_data:
                         model = valid_data['model']
                         brand = valid_data['brand']
@@ -145,6 +153,7 @@ class GetDeleteUpdateAdvert(APIView):
                             return JsonResponse({'error': 'Provided car model not in car brand.'},
                                                 status=400)
 
+                    # Enforce brand and model relationship in the car_adverts table.
                     if 'model' in valid_data and 'brand' not in valid_data:
                         model = valid_data['model']
                         brand = advert.brand
@@ -152,7 +161,9 @@ class GetDeleteUpdateAdvert(APIView):
                             return JsonResponse({'error': 'Provided car model not in car brand.'},
                                                 status=400)
 
-                    if uploaded_images:
+                    if 'uploaded_images' in valid_data:
+                        uploaded_images = valid_data.pop('uploaded_images')
+
                         if len(uploaded_images) > 10:
                             error_message = 'Uploaded images cannot be more than 10.'
                             return JsonResponse({'error': error_message}, status=400)
@@ -183,6 +194,19 @@ class GetDeleteUpdateAdvert(APIView):
 
                     for attr, value in valid_data.items():
                         setattr(advert, attr, value)
+
+                    # update tag
+                    year = advert.year.year
+                    brand_name = advert.brand.name
+                    model_name = advert.model.name
+                    state_name = advert.state.name
+                    city_name = advert.city.name
+                    user_name = advert.user.username
+                    fuel_type = advert.fuel_type
+
+                    advert.tag = f'{year}, {brand_name}, {model_name}, {fuel_type}, '\
+                                f'{state_name}, {city_name}, {user_name}'
+
                     advert.save()
 
                     if is_superuser is True:

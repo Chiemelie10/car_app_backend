@@ -56,6 +56,8 @@ class GetDeleteUpdateUser(APIView):
             manager = user.team_manager if hasattr(user, 'team_manager') else None
             if manager:
                 user_manager = True if manager.id == user_id else False
+            else:
+                user_manager = False
 
             if user_manager is True or is_superuser is True or user_id == pk:
                 try:
@@ -114,6 +116,8 @@ class GetDeleteUpdateUser(APIView):
             manager = user.team_manager if hasattr(user, 'team_manager') else None
             if manager:
                 user_manager = True if manager.id == user_id else False
+            else:
+                user_manager = False
 
             if user_manager is True or is_superuser is True or user_id == pk:
                 serializer = UserModelSerializer(user, data=request.data, partial=True)
