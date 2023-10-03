@@ -29,7 +29,7 @@ def password_hasher(data):
 def decode_token(request):
     """
     This decodes a jwt token from the Authorization header of a request and
-    returns the values of user_id and is_staff.
+    returns the values of user_id, is_superuser and is_manager.
     """
     auth_header = request.META.get('HTTP_AUTHORIZATION')
 
@@ -50,3 +50,26 @@ def decode_token(request):
             return JsonResponse({'error': str(error)}, status=401)
     else:
         return JsonResponse({'error': 'Authorization header is required.'}, status=401)
+
+
+def decode_refresh_token(request):
+    """
+    This decodes a jwt refresh token from the cookie in header of a request and
+    returns the values of user_id, is_superuser and is_manager.
+    """
+    refresh_token = request.COOKIES.get('refresh')
+
+    if refresh_token:
+        secret_key = getenv('PROJECT_SECRET_KEY')
+        try:
+            decoded_token = jwt.decode(refresh_token, secret_key, algorithms=['HS256'])
+            user_id = decoded_token.get('user_id')
+            return user_id, refresh_token
+        except jwt.ExpiredSignatureError:
+            return JsonResponse({'error': 'The token has expired.'}, status=401)
+        except jwt.DecodeError:
+            return JsonResponse({'error': 'The token is invalid.'}, status=401)
+        except BaseException as error: # pylint: disable=broad-exception-caught
+            return JsonResponse({'error': str(error)}, status=401)
+    else:
+        return JsonResponse({'error': 'Refresh token not found in the cookie.'}, status=401)

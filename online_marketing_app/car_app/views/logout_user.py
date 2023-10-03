@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from django.http import JsonResponse
 from user_activity.models import UserActivity
 from car_app.models import User
-from car_app.views.views_helper_functions import decode_token
+from car_app.views.views_helper_functions import decode_refresh_token
 
 
 class UserLogout(APIView):
@@ -21,12 +21,12 @@ class UserLogout(APIView):
 
     def post(self, request):
         """This method blacklists refresh token when a user logs out."""
-        if request.content_type != 'application/json':
-            return JsonResponse({'error': 'The Content-Type must be json.'}, status=415)
+        # if request.content_type != 'application/json':
+        #     return JsonResponse({'error': 'The Content-Type must be json.'}, status=415)
 
-        result = decode_token(request)
+        result = decode_refresh_token(request)
         if isinstance(result, tuple):
-            user_id, _, _ = result
+            user_id, refresh_token = result
 
             try:
                 user = User.objects.get(id=user_id)
@@ -34,8 +34,7 @@ class UserLogout(APIView):
                 return JsonResponse({'error': 'Provided token has no valid user.'}, status=401)
 
             try:
-                refresh = request.data.get('refresh')
-                token = RefreshToken(refresh)
+                token = RefreshToken(refresh_token)
                 token.blacklist()
 
                 UserActivity.objects.create(
