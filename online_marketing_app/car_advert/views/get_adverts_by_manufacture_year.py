@@ -21,4 +21,4 @@ class AdvertsByManufactureYear(APIView):
             serializer = CarAdvertSerializer(adverts, many=True)
             return JsonResponse(serializer.data, safe=False, status=200)
         except ManufactureYear.DoesNotExist:
-            return JsonResponse({'error': 'Car manufacture year not found.'}, status=400)
+            return JsonResponse({'error': 'Car manufacture year not found.'}, status=404)
