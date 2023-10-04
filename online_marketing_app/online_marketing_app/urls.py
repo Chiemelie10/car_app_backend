@@ -32,6 +32,7 @@ urlpatterns = [
     path('', include('car_model.urls')),
     path('', include('car_manufacture_year.urls')),
     path('', include('car_brand.urls')),
+    path('', include('image.urls')),
 ]
 
 if settings.DEBUG:
