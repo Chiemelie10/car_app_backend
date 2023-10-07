@@ -1,6 +1,6 @@
 """This module defines class GetDeleteUpdateAdvert."""
 from rest_framework.views import APIView
-from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.parsers import FormParser, MultiPartParser, JSONParser
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.http import JsonResponse
@@ -92,7 +92,7 @@ class GetDeleteUpdateAdvert(APIView):
 
     def put(self, request, pk): # pylint: disable=redefined-builtin
         """This method updates all the fields of an instance of the CarAdvert model."""
-        self.parser_classes = [MultiPartParser, FormParser]
+        self.parser_classes = [JSONParser, MultiPartParser, FormParser]
         try:
             advert = CarAdvert.objects.get(id=pk)
             user = advert.user
@@ -175,6 +175,22 @@ class GetDeleteUpdateAdvert(APIView):
                                             'or reduce the number of new images to be uploaded.'
                             return JsonResponse({'error': error_message}, status=400)
 
+                        if len(images) + len(uploaded_images) < 5:
+                            error_message = 'Uploaded images cannot be less than 5.'
+                            return JsonResponse({'error': error_message}, status=400)
+
+                        for image in images:
+                            if image.cloud_image is not None:
+                                if image.cloud_image != '':
+                                    return JsonResponse({'error': 'Images were previously '\
+                                                            'saved on the server, '\
+                                                            'delete completely to save '\
+                                                            'on the cloud for this advert.'},
+                                                            status=400)
+
+                        valid_data['is_cloud_server_images'] = False
+
+
                         for image in uploaded_images:
                             try:
                                 image_instances = []
@@ -186,11 +202,74 @@ class GetDeleteUpdateAdvert(APIView):
                                     image_instance.delete()
                                 return JsonResponse({'error': str(error)}, status=400)
 
+                    if 'uploaded_cloud_images' in valid_data:
+                        uploaded_cloud_images = valid_data.pop('uploaded_cloud_images')
+
+                        if len(uploaded_cloud_images) > 10:
+                            error_message = 'Uploaded images cannot be more than 10.'
+                            return JsonResponse({'error': error_message}, status=400)
+
+                        images = advert.images.all()
+                        if len(images) + len(uploaded_cloud_images) > 10:
+                            error_message = 'Uploaded images cannot be more than 10, '\
+                                            'either delete previous uploaded images '\
+                                            'or reduce the number of new images to be uploaded.'
+                            return JsonResponse({'error': error_message}, status=400)
+
+                        if len(images) + len(uploaded_cloud_images) < 5:
+                            error_message = 'Uploaded images cannot be less than 5.'
+                            return JsonResponse({'error': error_message}, status=400)
+
+                        for image in images:
+                            if image.image is not None:
+                                if image.image != '':
+                                    return JsonResponse({'error': 'Images were previously '\
+                                                            'saved on the server, '\
+                                                            'delete completely to save '\
+                                                            'on the cloud for this advert.'},
+                                                            status=400)
+
+                        valid_data['is_cloud_server_images'] = True
+
+                        for image in uploaded_cloud_images:
+                            try:
+                                image_instances = []
+                                new_image = Image(car_advert=advert, cloud_image=image)
+                                new_image.save()
+                                image_instances.append(new_image)
+                            except Exception as error: # pylint: disable=broad-exception-caught
+                                for image_instance in image_instances:
+                                    image_instance.delete()
+                                return JsonResponse({'error': str(error)}, status=400)
+
+
                     if 'thumbnail' in valid_data:
+                        if advert.thumbnail_cloud is not None:
+                            if advert.thumbnail_cloud != '':
+                                return JsonResponse({'error': 'Thumbnail was previously '\
+                                                             'saved on the server, '\
+                                                             'delete it to save '\
+                                                             'on the cloud for this advert.'},
+                                                             status=400)
                         thumbnail = valid_data.get('thumbnail')
                         if not thumbnail:
                             return JsonResponse({'error': 'Thumbnail cannot be empty.'},
                                                 status=400)
+                        valid_data['is_cloud_server_thumbnail'] = False
+
+                    if 'thumbnail_cloud' in valid_data:
+                        if advert.thumbnail is not None:
+                            if advert.thumbnail != '':
+                                return JsonResponse({'error': 'Thumbnail was previously '\
+                                                             'saved on the server, '\
+                                                             'delete it to save '\
+                                                             'on the cloud for this advert.'},
+                                                             status=400)
+                        thumbnail_cloud = valid_data.get('thumbnail_cloud')
+                        if not thumbnail_cloud:
+                            return JsonResponse({'error': 'Thumbnail cannot be empty.'},
+                                                status=400)
+                        valid_data['is_cloud_server_thumbnail'] = True
 
                     for attr, value in valid_data.items():
                         setattr(advert, attr, value)

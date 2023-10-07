@@ -6,9 +6,10 @@ from car_advert.models import CarAdvert
 class Image(models.Model):
     """This class defines the fields of the model."""
     car_advert = models.ForeignKey(CarAdvert, related_name='images',
-                                      on_delete=models.CASCADE)
+                                   on_delete=models.CASCADE)
     image = models.ImageField(upload_to='advertisement_images', default='',
                               null=True, blank=True)
+    cloud_image = models.CharField(max_length=200, default='', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

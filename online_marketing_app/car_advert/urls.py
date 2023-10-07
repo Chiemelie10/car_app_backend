@@ -9,6 +9,7 @@ from car_advert.views.get_adverts_by_state import AdvertsByState
 from car_advert.views.get_images_by_advert import ImagesByAdvert
 from car_advert.views.post_advert import PostAdvert
 from car_advert.views.search import SearchAdvert
+from car_advert.views.get_adverts_by_manager import GetManagerAdvert
 
 
 urlpatterns = [
@@ -18,6 +19,10 @@ urlpatterns = [
     path('api/create-advert', PostAdvert.as_view(), name='post-advert'),
     path('api/search/', SearchAdvert.as_view(), name='search-advert'),
     path('api/search', SearchAdvert.as_view(), name='search-advert'),
+    path('api/managers/<str:manager_id>/adverts/', GetManagerAdvert.as_view(),
+         name='get-manager-adverts'),
+    path('api/managers/<str:manager_id/adverts', GetManagerAdvert.as_view(),
+         name='get-manager-adverts'),
     path('api/adverts/<str:pk>/', GetDeleteUpdateAdvert.as_view(),
          name='get-delete-update-adverts'),
     path('api/adverts/<str:pk>', GetDeleteUpdateAdvert.as_view(),

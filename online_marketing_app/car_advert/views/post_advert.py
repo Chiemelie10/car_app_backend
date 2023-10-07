@@ -1,7 +1,7 @@
 """This module defines class PostAdvert."""
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAdminUser
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django.http import JsonResponse
 from car_advert.models import CarAdvert
 from car_advert.serializers import CarAdvertSerializer
@@ -16,7 +16,7 @@ class PostAdvert(APIView):
     # pylint: disable=no-member
 
     permission_classes = [IsAdminUser]
-    parser_classes = [MultiPartParser, FormParser]
+    parser_classes = [JSONParser, MultiPartParser, FormParser]
 
     def post(self, request):
         """
@@ -26,14 +26,42 @@ class PostAdvert(APIView):
         serializer = CarAdvertSerializer(data=request.data)
         if serializer.is_valid():
             validated_data = serializer.validated_data
-            uploaded_images = validated_data.pop('uploaded_images')
+            uploaded_images = validated_data.pop('uploaded_images', None)
+            uploaded_cloud_images = validated_data.pop('uploaded_cloud_images', None)
 
-            if not uploaded_images or len(uploaded_images) < 5:
+            if uploaded_images and uploaded_cloud_images:
+                return JsonResponse({'error': 'You can either save images '\
+                                     'to the cloud or server, but not both.'},
+                                    status=400)
+
+            if not uploaded_images and not uploaded_cloud_images:
+                return JsonResponse({'error': 'Images are required.'}, status=400)
+
+            if uploaded_images and len(uploaded_images) < 5:
                 return JsonResponse({'error': 'Uploaded images cannot be less than 5.'},
                                     status=400)
-            if len(uploaded_images) > 10:
+            if uploaded_images and len(uploaded_images) > 10:
                 return JsonResponse({'error': 'Uploaded images cannot be more than 10.'},
                                     status=400)
+
+            if uploaded_cloud_images and len(uploaded_cloud_images) < 5:
+                return JsonResponse({'error': 'Uploaded images cannot be less than 5.'},
+                                    status=400)
+            if uploaded_cloud_images and len(uploaded_cloud_images) > 10:
+                return JsonResponse({'error': 'Uploaded images cannot be more than 10.'},
+                                    status=400)
+            
+            thumbnail = validated_data.get('thumbnail', None)
+            thumbnail_cloud = validated_data.get('thumbnail_cloud', None)
+            
+            if thumbnail and thumbnail_cloud:
+                return JsonResponse({'error': 'You can either save images '\
+                                     'to the cloud or server, but not both.'},
+                                    status=400)
+
+            if not thumbnail and not thumbnail_cloud:
+                return JsonResponse({'error': 'Thumbnail is required.'}, status=400)
+
 
             city = validated_data.get('city')
             state = validated_data.get('state')
@@ -75,16 +103,31 @@ class PostAdvert(APIView):
 
                     validated_data['tag'] = f'{year}, {brand_name}, {model_name}, {fuel_type}, '\
                                             f'{state_name}, {city_name}, {user_name}'
+                    
+                    if thumbnail_cloud:
+                        validated_data['is_cloud_server_thumbnail'] = True
+
+                    if uploaded_cloud_images:
+                        validated_data['is_cloud_server_images'] = True
 
                     car_advert = CarAdvert(**validated_data)
                     car_advert.save()
 
-                    for image in uploaded_images:
-                        try:
-                            Image.objects.create(car_advert=car_advert, image=image)
-                        except Exception as error: # pylint: disable=broad-exception-caught
-                            car_advert.delete()
-                            return JsonResponse({'error': str(error)}, status=400)
+                    if uploaded_images:
+                        for image in uploaded_images:
+                            try:
+                                Image.objects.create(car_advert=car_advert, image=image)
+                            except Exception as error: # pylint: disable=broad-exception-caught
+                                car_advert.delete()
+                                return JsonResponse({'error': str(error)}, status=400)
+                    elif uploaded_cloud_images:
+                        car_advert.is_cloud_server_images = True
+                        for image in uploaded_cloud_images:
+                            try:
+                                Image.objects.create(car_advert=car_advert, cloud_image=image)
+                            except Exception as error: # pylint: disable=broad-exception-caught
+                                car_advert.delete()
+                                return JsonResponse({'error': str(error)}, status=400)
 
                     if is_superuser is True:
                         try:

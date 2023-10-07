@@ -37,6 +37,13 @@ class UserLogin(APIView):
         refresh['username'] = user.username
         refresh['is_superuser'] = user.is_superuser
         refresh['is_manager'] = user.is_manager
+        refresh['first_name'] = user.first_name
+        refresh['last_name'] = user.last_name
+        refresh['email'] = user.email
+        refresh['phone_number'] = user.phone_number
+        refresh['team_manager'] = user.team_manager
+        refresh['created_at'] = user.created_at
+        refresh['referral_code'] = user.referral_code
         access = str(refresh.access_token)
 
         response = JsonResponse({'access': access}, status=200)

@@ -26,7 +26,8 @@ class CarAdvert(models.Model):
     description = models.TextField()
     tag = models.CharField(max_length=100, blank=True, null=True, editable=False)
     price = models.DecimalField(decimal_places=2, max_digits=13)
-    thumbnail = models.ImageField(upload_to='thumbnail')
+    thumbnail = models.ImageField(upload_to='thumbnail', null=True, blank=True, default='')
+    thumbnail_cloud = models.CharField(max_length=200, null=True, blank=True, default='')
     fuel_type = models.CharField(choices=FUEL_TYPE_CHOICES, max_length=100)
     brand = models.ForeignKey(CarBrand, related_name='adverts', on_delete=models.CASCADE)
     model = models.ForeignKey(CarModel, related_name='adverts', on_delete=models.CASCADE)
@@ -35,6 +36,8 @@ class CarAdvert(models.Model):
     state = models.ForeignKey(State, related_name='adverts', on_delete=models.CASCADE)
     city = models.ForeignKey(City, related_name='adverts', on_delete=models.CASCADE)
     is_active = models.BooleanField(default=True)
+    is_cloud_server_images = models.BooleanField(default=False)
+    is_cloud_server_thumbnail = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -58,9 +58,10 @@ class CarAdvertModelAdmin(admin.ModelAdmin):
     ordering = ('created_at',)
     list_display = ('id', 'is_active', 'brand', 'model', 'year', 'user')
     fieldsets = (
-        (None, {'fields': ('thumbnail',)}),
+        (None, {'fields': ('thumbnail', 'thumbnail_cloud')}),
         (None, {'fields': ('title', 'description', 'price', 'fuel_type', 'brand',
-                           'model', 'year', 'user', 'state', 'city', 'is_active')}),
+                           'model', 'year', 'user', 'state', 'city', 'is_active',
+                           'is_cloud_server_images', 'is_cloud_server_thumbnail')}),
     )
     add_fieldsets = (
         (None, {
