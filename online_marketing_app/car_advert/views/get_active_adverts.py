@@ -1,4 +1,4 @@
-"""This module defines class GetAdverts."""
+"""This module defines class GetActiveAdverts."""
 from rest_framework.views import APIView
 from django.http import JsonResponse
 from django.urls import reverse
@@ -8,7 +8,7 @@ from car_advert.serializers import CarAdvertSerializer
 from car_advert.utils import paginate_queryset
 
 
-class GetAdverts(APIView):
+class GetActiveAdverts(APIView):
     """
     This class defines a method that returns all instances
     of CarAdvert in the database.
@@ -17,28 +17,14 @@ class GetAdverts(APIView):
 
     def get(self, request):
         """
-        This method returns all instances of the CarAdvert module in the database.
+        This method returns all instances of the CarAdvert module that
+        have 'is_active' field set to true.
         """
         # pylint: disable=broad-exception-caught
         # pylint: disable=no-member
 
-        page = request.GET.get('page')
-        page_size = request.GET.get('page-size')
-
-        if not page_size and not page:
-            try:
-                adverts = CarAdvert.objects.all().order_by('created_at')
-            except Exception as error:
-                return JsonResponse({'error': str(error)}, status=500)
-
-            serializer = CarAdvertSerializer(adverts, many=True)
-            return JsonResponse(serializer.data, status=200, safe=False)
-
-        if page and not page_size:
-            return JsonResponse({'error': 'Page size is needed.'}, status=400)
-
-        if page_size and not page:
-            page = 1
+        page = request.GET.get('page', 1)
+        page_size = request.GET.get('page-size', 10)
 
         try:
             page = int(page)
@@ -47,11 +33,11 @@ class GetAdverts(APIView):
             return JsonResponse({'error': 'Invalid page or page size values.'}, status=400)
 
         try:
-            adverts = CarAdvert.objects.all().order_by('created_at')
+            all_active_adverts = CarAdvert.objects.filter(is_active=True).order_by('created_at')
         except Exception as error:
             return JsonResponse({'error': str(error)}, status=500)
 
-        result = paginate_queryset(adverts, page, page_size)
+        result = paginate_queryset(all_active_adverts, page, page_size)
 
         if isinstance(result, JsonResponse):
             return result
@@ -65,21 +51,21 @@ class GetAdverts(APIView):
         elif page == 1 and page < total_pages:
             previous_page = None
             next_page = f"https://{get_current_site(request).domain}"\
-                        f"{reverse('get-adverts')}/?page={page + 1}&page-size={page_size}"
+                        f"{reverse('get-active-adverts')}/?page={page + 1}&page-size={page_size}"
         if page > 1 and page < total_pages:
             previous_page = f"https://{get_current_site(request).domain}"\
-                            f"{reverse('get-adverts')}/?page={page - 1}"\
+                            f"{reverse('get-active-adverts')}/?page={page - 1}"\
                             f"&page-size={page_size}"
             next_page = f"https://{get_current_site(request).domain}"\
-                        f"{reverse('get-adverts')}/?page={page + 1}&page-size={page_size}"
+                        f"{reverse('get-active-adverts')}/?page={page + 1}&page-size={page_size}"
         if page > 1 and page == total_pages:
             previous_page = f"https://{get_current_site(request).domain}"\
-                            f"{reverse('get-adverts')}/?page={page - 1}"\
+                            f"{reverse('get-active-adverts')}/?page={page - 1}"\
                             f"&page-size={page_size}"
             next_page = None
 
         data = {
-            'total_adverts': len(adverts),
+            'total_adverts': len(all_active_adverts),
             'total_pages': total_pages,
             'previous_page': previous_page,
             'next_page': next_page,

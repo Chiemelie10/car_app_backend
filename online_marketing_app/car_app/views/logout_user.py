@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from django.http import JsonResponse
 from user_activity.models import UserActivity
 from car_app.models import User
-from car_app.views.views_helper_functions import decode_refresh_token
+from car_app.views.views_helper_functions import decode_token, decode_refresh_token
 
 
 class UserLogout(APIView):
@@ -21,24 +21,46 @@ class UserLogout(APIView):
 
     def post(self, request):
         """This method blacklists refresh token when a user logs out."""
-        # if request.content_type != 'application/json':
-        #     return JsonResponse({'error': 'The Content-Type must be json.'}, status=415)
+        if request.content_type != 'application/json':
+            return JsonResponse({'error': 'The Content-Type must be json.'}, status=415)
 
-        result = decode_refresh_token(request)
+        refresh_token = request.data.get('refresh')
+        if not refresh_token:
+            return JsonResponse({'error': 'Refresh token is required.'}, status=400)
+
+        result = decode_token(request)
         if isinstance(result, tuple):
-            user_id, refresh_token = result
+            user_id, is_superuser, _ = result
 
+            result = decode_refresh_token(refresh_token)
+            if isinstance(result, JsonResponse):
+                return result
+
+            refresh_token_user_id = result
             try:
-                user = User.objects.get(id=user_id)
+                user_logging_out = User.objects.get(id=refresh_token_user_id)
             except User.DoesNotExist:
                 return JsonResponse({'error': 'Provided token has no valid user.'}, status=401)
+
+
+            manager = user_logging_out.team_manager if hasattr(
+                user_logging_out, 'team_manager') else None
+
+            if manager:
+                user_manager = True if manager.id == user_id else False
+            else:
+                user_manager = False
+
+            if refresh_token_user_id != user_id and is_superuser is False and user_manager is False:
+                error_message = 'You do not have the permission to perform this action.'
+                return JsonResponse({'error': error_message}, status=403)
 
             try:
                 token = RefreshToken(refresh_token)
                 token.blacklist()
 
                 UserActivity.objects.create(
-                    user = user,
+                    user = user_logging_out,
                     activity_type = 'Logout',
                 )
 

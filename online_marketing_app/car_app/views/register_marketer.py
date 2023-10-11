@@ -39,10 +39,13 @@ class MarketerRegistrationView(APIView):
 
             referral_code = validated_data.get('referral_code')
 
+            if referral_code is None:
+                referral_code = staff_user.manager_code
+                validated_data['referral_code'] = referral_code
+
             try:
-                if referral_code is not None:
-                    team_manager = User.objects.get(manager_code=referral_code)
-                    validated_data['team_manager'] = team_manager
+                team_manager = User.objects.get(manager_code=referral_code)
+                validated_data['team_manager'] = team_manager
                 user = User(**validated_data)
                 user.save()
 

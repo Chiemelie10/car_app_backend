@@ -17,7 +17,7 @@ class GetUsers(APIView):
         This method returns all registered users. It also returns
         an empty list if no user is found.
         """
-        users = User.objects.all()
+        users = User.objects.all().order_by('created_at')
 
         if users.exists():
             serializer = GetUserSerializer(users, many=True)

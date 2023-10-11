@@ -34,6 +34,7 @@ class UserLogin(APIView):
             return JsonResponse({'error': 'User not found.'}, status=400)
 
         refresh = RefreshToken.for_user(user)
+
         refresh['username'] = user.username
         refresh['is_superuser'] = user.is_superuser
         refresh['is_manager'] = user.is_manager
@@ -41,13 +42,11 @@ class UserLogin(APIView):
         refresh['last_name'] = user.last_name
         refresh['email'] = user.email
         refresh['phone_number'] = user.phone_number
-        refresh['team_manager'] = user.team_manager
-        refresh['created_at'] = user.created_at
+        refresh['team_manager'] = str(user.team_manager)
+        refresh['created_at'] = str(user.created_at)
         refresh['referral_code'] = user.referral_code
-        access = str(refresh.access_token)
 
-        response = JsonResponse({'access': access}, status=200)
-        response.set_cookie('refresh', str(refresh), httponly=True)
+        access = str(refresh.access_token)
 
         user.last_login = timezone.now()
         user.save()
@@ -57,4 +56,4 @@ class UserLogin(APIView):
             activity_type = 'Login',
         )
 
-        return response
+        return JsonResponse({'refrsh': str(refresh), 'access': access}, status=200)

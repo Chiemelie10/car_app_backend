@@ -1,6 +1,6 @@
 """This module defines all the endpoints relating to the CarAdvert model."""
 from django.urls import path
-from car_advert.views.get_adverts import GetAdverts
+from car_advert.views.get_active_adverts import GetActiveAdverts
 from car_advert.views.get_delete_update_advert import GetDeleteUpdateAdvert
 from car_advert.views.get_adverts_by_brand import AdvertsByBrand
 from car_advert.views.get_adverts_by_model import AdvertsByModel
@@ -10,11 +10,14 @@ from car_advert.views.get_images_by_advert import ImagesByAdvert
 from car_advert.views.post_advert import PostAdvert
 from car_advert.views.search import SearchAdvert
 from car_advert.views.get_adverts_by_manager import GetManagerAdvert
+from car_advert.views.get_adverts import GetAdverts
 
 
 urlpatterns = [
-    path('api/adverts/', GetAdverts.as_view(), name='get-adverts'),
-    path('api/adverts', GetAdverts.as_view(), name='get-adverts'),
+    path('api/adverts/', GetActiveAdverts.as_view(), name='get-active-adverts'),
+    path('api/adverts', GetActiveAdverts.as_view(), name='get-active-adverts'),
+    path('api/all-adverts/', GetAdverts.as_view(), name='get-adverts'),
+    path('api/all-adverts', GetAdverts.as_view(), name='get-adverts'),
     path('api/create-advert/', PostAdvert.as_view(), name='post-advert'),
     path('api/create-advert', PostAdvert.as_view(), name='post-advert'),
     path('api/search/', SearchAdvert.as_view(), name='search-advert'),
