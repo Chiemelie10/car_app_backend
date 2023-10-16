@@ -4,3 +4,6 @@ internal_server_error.py
 __pycache__
 advertisement_images
 thumbnail
+migrations
+tests
+refresh_token.py

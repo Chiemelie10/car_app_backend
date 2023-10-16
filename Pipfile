@@ -15,6 +15,10 @@ djangorestframework-simplejwt = "*"
 pyjwt = "*"
 pillow = "*"
 gunicorn = "*"
+requests = "*"
+python-magic-bin = "*"
+imagehash = "*"
+stripe = "*"
 
 [dev-packages]
 
