@@ -32,6 +32,8 @@ class GetUserActivity(APIView):
             elif is_manager:
                 activities = UserActivity.objects.filter(
                     user__in=[user] + list(user.managed_users.all())).order_by('-timestamp')
+            elif user.is_staff and not is_manager:
+                activities = UserActivity.objects.filter(user=user)
 
             serializer = UserActivitySerializer(activities, many=True)
             return JsonResponse(serializer.data, status=200, safe=False)
