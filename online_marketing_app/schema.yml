@@ -1,0 +1,1521 @@
+openapi: 3.0.3
+info:
+  title: CarAutos service API
+  version: 0.0.0
+paths:
+  /api/activities/:
+    get:
+      operationId: api_activities_retrieve
+      description: This method returns all user activities.
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserActivity'
+          description: ''
+  /api/adverts/:
+    get:
+      operationId: api_adverts_retrieve
+      description: |-
+        This method returns all instances of the CarAdvert module that
+        have 'is_active' field set to true.
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarAdvert'
+          description: ''
+  /api/adverts/{advert_id}/images/:
+    get:
+      operationId: api_adverts_images_retrieve
+      description: This method returns all images of a particlar advert.
+      parameters:
+      - in: path
+        name: advert_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageModel'
+          description: ''
+  /api/adverts/{id}/:
+    get:
+      operationId: api_adverts_retrieve_2
+      description: |-
+        This method returns the request.data of one instance of the CarAdvert model if
+        the provided id matches any in the database. It also returns a http status
+        code of 400 if provided id fails to match any of the ids in the database.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarAdvert'
+          description: ''
+    put:
+      operationId: api_adverts_update
+      description: This method updates all the fields of an instance of the CarAdvert
+        model.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarAdvertRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CarAdvertRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CarAdvertRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarAdvert'
+          description: ''
+    delete:
+      operationId: api_adverts_destroy
+      description: |-
+        This method deletes an instance of the CarAdvert model if the provided id
+        matches any in the database.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                example:
+                  message: Advert d089c6dd-41ae-4e94-aa1d-371eecbcd88a deleted successfully.
+          description: ''
+  /api/adverts/brands/{brand_id}/:
+    get:
+      operationId: api_adverts_brands_retrieve
+      description: |-
+        This method returns all adverts of a particular brand that have
+        is_active set true.
+      parameters:
+      - in: path
+        name: brand_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarAdvert'
+          description: ''
+  /api/adverts/models/{model_id}/:
+    get:
+      operationId: api_adverts_models_retrieve
+      description: |-
+        This method returns all adverts of a particular model that have
+        is_active set true.
+      parameters:
+      - in: path
+        name: model_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarAdvert'
+          description: ''
+  /api/adverts/states/{state_id}/:
+    get:
+      operationId: api_adverts_states_retrieve
+      description: |-
+        This method returns all adverts in a particular state that have
+        is_active set true.
+      parameters:
+      - in: path
+        name: state_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarAdvert'
+          description: ''
+  /api/adverts/years/{year_id}/:
+    get:
+      operationId: api_adverts_years_retrieve
+      description: |-
+        This method returns all adverts of a particular manufacture year
+        that have is_active set true.
+      parameters:
+      - in: path
+        name: year_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarAdvert'
+          description: ''
+  /api/all-adverts/:
+    get:
+      operationId: api_all_adverts_retrieve
+      description: This method returns all instances of the CarAdvert module in the
+        database.
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarAdvert'
+          description: ''
+  /api/brands/:
+    get:
+      operationId: api_brands_retrieve
+      description: |-
+        This method returns all instances of the CarBrand model
+        in the database.
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarBrand'
+          description: ''
+  /api/brands/{brand_id}/models/:
+    get:
+      operationId: api_brands_models_retrieve
+      description: This method returns all models of a particular brand.
+      parameters:
+      - in: path
+        name: brand_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarModel'
+          description: ''
+  /api/cities/:
+    get:
+      operationId: api_cities_retrieve
+      description: |-
+        This method returns all instances of the City model
+        from the database.
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CityModel'
+          description: ''
+  /api/create-advert/:
+    post:
+      operationId: api_create_advert_create
+      description: |-
+        This method validates a post request from api/create-advert route
+        and saves it to the database if successful.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarAdvertRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CarAdvertRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CarAdvertRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarAdvert'
+          description: ''
+  /api/images/{image_id}/:
+    delete:
+      operationId: api_images_destroy
+      description: |-
+        This method deletes a an image from the database and location
+        it was saved in the server.
+      parameters:
+      - in: path
+        name: image_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/login/:
+    post:
+      operationId: api_login_create
+      description: |-
+        This method returns access and refresh tokens for a user
+        if the provided data for login is found in the database.
+        It returns a http error code of 400 if the provided data
+        for login is not found in the database.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                username: example_user
+                password: secret_password
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                example:
+                  refresh: refresh_token
+                  access: access_token
+          description: ''
+  /api/logout/:
+    post:
+      operationId: api_logout_create
+      description: This method blacklists refresh token when a user logs out.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                refresh: refresh_token
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                example:
+                  message: Logged out successfully.
+          description: ''
+  /api/managers/{manager_id}/adverts/:
+    get:
+      operationId: api_managers_adverts_retrieve
+      description: This method returns all adverts managed by a user
+      parameters:
+      - in: path
+        name: manager_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarAdvert'
+          description: ''
+  /api/models/:
+    get:
+      operationId: api_models_retrieve
+      description: |-
+        This method returns all instances of the CarModel model
+        from the database.
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarModel'
+          description: ''
+  /api/register-marketer/:
+    post:
+      operationId: api_register_marketer_create
+      description: |-
+        This method hashes the provided password and saves
+        a user to the database.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                username: example_user
+                password: secret_password
+                email: example@gmail.com
+                first_name: user_first_name
+                last_name: user_last_name
+                phone_number: 07058679688
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUser'
+          description: ''
+  /api/schema/:
+    get:
+      operationId: api_schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - af
+          - ar
+          - ar-dz
+          - ast
+          - az
+          - be
+          - bg
+          - bn
+          - br
+          - bs
+          - ca
+          - ckb
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/yaml:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/search/:
+    post:
+      operationId: api_search_create
+      description: This method searches for adverts by title, description, fuel_type
+        or tag.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                search: query string
+                page: optional (int)
+                page_size: optional (int)
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                example:
+                  total_adverts: 1
+                  total_pages: 1
+                  previous_page: null
+                  next_page: null
+                  adverts:
+                  - id: string
+                    images:
+                    - id: 0
+                      image: string
+                      cloud_image: string
+                      created_at: '2024-01-19T23:54:33.649Z'
+                      updated_at: '2024-01-19T23:54:33.649Z'
+                      car_advert: string
+                    is_active: true
+                    thumbnail: string
+                    thumbnail_cloud: string
+                    title: string
+                    description: string
+                    tag: string
+                    price: '-639297.'
+                    fuel_type: petrol
+                    is_cloud_server_images: true
+                    is_cloud_server_thumbnail: true
+                    created_at: '2024-01-19T23:54:33.650Z'
+                    updated_at: '2024-01-19T23:54:33.650Z'
+                    brand: 0
+                    model: 0
+                    year: 0
+                    user: string
+                    state: 0
+                    city: 0
+          description: ''
+  /api/search-user/:
+    post:
+      operationId: api_search_user_create
+      description: |-
+        This method searches for users by username, first_name, last_name,
+        phone_number, email and manager_code.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                search: query string
+                page: optional (int)
+                page_size: optional (int)
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                example:
+                  total_users_found: 1
+                  total_pages: 1
+                  previous_page: null
+                  next_page: null
+                  users:
+                  - id: string
+                    last_login: '2024-01-19T23:25:46.774Z'
+                    username: string
+                    email: user@example.com
+                    phone_number: stringstrin
+                    first_name: string
+                    last_name: string
+                    is_staff: true
+                    is_active: true
+                    is_superuser: true
+                    is_manager: true
+                    is_marketer: true
+                    is_verified: true
+                    manager_code: string
+                    referral_code: string
+                    created_at: '2024-01-19T23:25:46.774Z'
+                    updated_at: '2024-01-19T23:25:46.774Z'
+                    team_manager: string
+                    groups: []
+                    user_permissions: []
+          description: ''
+  /api/send-email/:
+    get:
+      operationId: api_send_email_retrieve
+      description: This method sends email verification link to a registered user.
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/states/:
+    get:
+      operationId: api_states_retrieve
+      description: |-
+        This method returns all instances of the State model
+        from the database.
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StateModel'
+          description: ''
+  /api/states/{state_id}/cities/:
+    get:
+      operationId: api_states_cities_retrieve
+      description: This method returns all cities of a particular state.
+      parameters:
+      - in: path
+        name: state_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CityModel'
+          description: ''
+  /api/token/refresh/:
+    post:
+      operationId: api_token_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /api/users/:
+    get:
+      operationId: api_users_retrieve
+      description: |-
+        This method returns all registered users. It also returns
+        an empty list if no user is found.
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUser'
+          description: ''
+  /api/users/{id}/:
+    get:
+      operationId: api_users_retrieve_2
+      description: |-
+        This method returns a user's data if the provided id matches any in the
+        database. It also returns a status code of 400 if provided id fails to
+        match any of the ids in the database.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUser'
+          description: ''
+    put:
+      operationId: api_users_update
+      description: |-
+        This method updates the user data if the provided data matches
+        any in the database.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetUserRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GetUserRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GetUserRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUser'
+          description: ''
+    delete:
+      operationId: api_users_destroy
+      description: |-
+        This method deletes a user's data if the provided id matches any in the database.
+        It also returns an error status code of 400 if provided id fails to
+        match any of the ids in the database.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                example:
+                  message: Account for TestUser has been deleted successfully.
+          description: ''
+  /api/users/{user_id}/adverts/:
+    get:
+      operationId: api_users_adverts_retrieve
+      description: This method gets adverts depending on the provided user_id.
+      parameters:
+      - in: path
+        name: user_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarAdvert'
+          description: ''
+  /api/users/{user_id}/adverts/{advert_id}/:
+    get:
+      operationId: api_users_adverts_retrieve_2
+      description: This method gets an advert depending on the provided user_id and
+        advert_id.
+      parameters:
+      - in: path
+        name: advert_id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: user_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarAdvert'
+          description: ''
+  /api/verify-email/:
+    get:
+      operationId: api_verify_email_retrieve
+      description: |-
+        This method sets the is_verified field of the User model to true
+        in the database if successful, otherwise it returns a http status
+        code of 400 with the corresponding error message.
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/years/:
+    get:
+      operationId: api_years_retrieve
+      description: |-
+        This method returns all instances of the ManufactureYear model
+        from the database.
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManufactureYear'
+          description: ''
+components:
+  schemas:
+    CarAdvert:
+      type: object
+      description: This class serializes the fields of class CarAdvert.
+      properties:
+        id:
+          type: string
+          readOnly: true
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageModel'
+          readOnly: true
+        is_active:
+          type: boolean
+          default: true
+        thumbnail:
+          type: string
+          format: uri
+        thumbnail_cloud:
+          type: string
+        title:
+          type: string
+          maxLength: 100
+        description:
+          type: string
+        tag:
+          type: string
+          readOnly: true
+          nullable: true
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,2})?$
+        fuel_type:
+          $ref: '#/components/schemas/FuelTypeEnum'
+        is_cloud_server_images:
+          type: boolean
+        is_cloud_server_thumbnail:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        brand:
+          type: integer
+        model:
+          type: integer
+        year:
+          type: integer
+        user:
+          type: string
+        state:
+          type: integer
+        city:
+          type: integer
+      required:
+      - brand
+      - city
+      - created_at
+      - description
+      - fuel_type
+      - id
+      - images
+      - model
+      - price
+      - state
+      - tag
+      - title
+      - updated_at
+      - user
+      - year
+    CarAdvertRequest:
+      type: object
+      description: This class serializes the fields of class CarAdvert.
+      properties:
+        uploaded_images:
+          type: array
+          items:
+            type: string
+            format: binary
+          writeOnly: true
+        uploaded_cloud_images:
+          type: array
+          items:
+            type: string
+            minLength: 1
+            maxLength: 500
+          writeOnly: true
+        is_active:
+          type: boolean
+          default: true
+        thumbnail:
+          type: string
+          format: binary
+        thumbnail_cloud:
+          type: string
+          minLength: 1
+        title:
+          type: string
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+          minLength: 1
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,2})?$
+        fuel_type:
+          $ref: '#/components/schemas/FuelTypeEnum'
+        is_cloud_server_images:
+          type: boolean
+        is_cloud_server_thumbnail:
+          type: boolean
+        brand:
+          type: integer
+        model:
+          type: integer
+        year:
+          type: integer
+        user:
+          type: string
+          minLength: 1
+        state:
+          type: integer
+        city:
+          type: integer
+      required:
+      - brand
+      - city
+      - description
+      - fuel_type
+      - model
+      - price
+      - state
+      - title
+      - user
+      - year
+    CarBrand:
+      type: object
+      description: This class coverts Django's queryset or object to dictionary.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - name
+      - updated_at
+    CarModel:
+      type: object
+      description: This class coverts Django's queryset or object to dictionary.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        brand:
+          type: integer
+      required:
+      - brand
+      - created_at
+      - id
+      - name
+      - updated_at
+    CityModel:
+      type: object
+      description: This class coverts Django's queryset or object to dictionary.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        state:
+          type: integer
+      required:
+      - created_at
+      - id
+      - name
+      - state
+      - updated_at
+    FuelTypeEnum:
+      enum:
+      - petrol
+      - diesel
+      - liquefied petroleum
+      - CNG
+      - ethanol
+      - bio-diesel
+      type: string
+      description: |-
+        * `petrol` - Petrol
+        * `diesel` - Diesel
+        * `liquefied petroleum` - Liquefied Petroleum
+        * `CNG` - Compressed Natural Gas
+        * `ethanol` - Ethanol
+        * `bio-diesel` - Bio-Diesel
+    GetUser:
+      type: object
+      description: |-
+        This class serializes django queryset(many) or object(single) returned
+        from the database. This means it converts a user instance to python
+        dictionary or a queryset to list of dictionaries, which can then
+        be easily converted to JSON.
+      properties:
+        id:
+          type: string
+          readOnly: true
+        last_login:
+          type: string
+          format: date-time
+          nullable: true
+        username:
+          type: string
+          maxLength: 100
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        phone_number:
+          type: string
+          maxLength: 11
+          minLength: 11
+        first_name:
+          type: string
+          maxLength: 100
+        last_name:
+          type: string
+          maxLength: 100
+        is_staff:
+          type: boolean
+        is_active:
+          type: boolean
+        is_superuser:
+          type: boolean
+        is_manager:
+          type: boolean
+        is_marketer:
+          type: boolean
+        is_verified:
+          type: boolean
+        manager_code:
+          type: string
+          readOnly: true
+          nullable: true
+        referral_code:
+          type: string
+          nullable: true
+          maxLength: 12
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        team_manager:
+          type: string
+          nullable: true
+        groups:
+          type: array
+          items:
+            type: integer
+          description: The groups this user belongs to. A user will get all permissions
+            granted to each of their groups.
+        user_permissions:
+          type: array
+          items:
+            type: integer
+          description: Specific permissions for this user.
+      required:
+      - created_at
+      - email
+      - first_name
+      - id
+      - last_name
+      - manager_code
+      - phone_number
+      - updated_at
+      - username
+    GetUserRequest:
+      type: object
+      description: |-
+        This class serializes django queryset(many) or object(single) returned
+        from the database. This means it converts a user instance to python
+        dictionary or a queryset to list of dictionaries, which can then
+        be easily converted to JSON.
+      properties:
+        last_login:
+          type: string
+          format: date-time
+          nullable: true
+        username:
+          type: string
+          minLength: 1
+          maxLength: 100
+        email:
+          type: string
+          format: email
+          minLength: 1
+          maxLength: 254
+        phone_number:
+          type: string
+          minLength: 11
+          maxLength: 11
+        first_name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        last_name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        is_staff:
+          type: boolean
+        is_active:
+          type: boolean
+        is_superuser:
+          type: boolean
+        is_manager:
+          type: boolean
+        is_marketer:
+          type: boolean
+        is_verified:
+          type: boolean
+        referral_code:
+          type: string
+          nullable: true
+          maxLength: 12
+        team_manager:
+          type: string
+          minLength: 1
+          nullable: true
+        groups:
+          type: array
+          items:
+            type: integer
+          description: The groups this user belongs to. A user will get all permissions
+            granted to each of their groups.
+        user_permissions:
+          type: array
+          items:
+            type: integer
+          description: Specific permissions for this user.
+      required:
+      - email
+      - first_name
+      - last_name
+      - phone_number
+      - username
+    ImageModel:
+      type: object
+      description: This class converts django's queryset or object to dictionary.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        image:
+          type: string
+          format: uri
+          nullable: true
+        cloud_image:
+          type: string
+          nullable: true
+          maxLength: 200
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        car_advert:
+          type: string
+      required:
+      - car_advert
+      - created_at
+      - id
+      - updated_at
+    ImageModelRequest:
+      type: object
+      description: This class converts django's queryset or object to dictionary.
+      properties:
+        image:
+          type: string
+          format: binary
+          nullable: true
+        cloud_image:
+          type: string
+          nullable: true
+          maxLength: 200
+        car_advert:
+          type: string
+          minLength: 1
+      required:
+      - car_advert
+    ManufactureYear:
+      type: object
+      description: This class converts Django's queryset or object to a dictionary.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        year:
+          type: integer
+          maximum: 9999
+          minimum: 1970
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - updated_at
+      - year
+    StateModel:
+      type: object
+      description: This class coverts Django's queryset or object to dictionary.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - name
+      - updated_at
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+      required:
+      - access
+    TokenRefreshRequest:
+      type: object
+      properties:
+        refresh:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - refresh
+    UserActivity:
+      type: object
+      description: Defines the fields of the class that will be serialized
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        activity_type:
+          type: string
+          maxLength: 100
+        activity_details:
+          type: string
+          nullable: true
+          maxLength: 100
+        timestamp:
+          type: string
+          format: date-time
+          readOnly: true
+        user:
+          type: string
+      required:
+      - activity_type
+      - id
+      - timestamp
+      - user
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

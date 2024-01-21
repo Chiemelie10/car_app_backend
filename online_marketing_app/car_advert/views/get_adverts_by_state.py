@@ -10,6 +10,8 @@ class AdvertsByState(APIView):
     # pylint: disable=no-member
     # pylint: disable=unused-argument
 
+    serializer_class = CarAdvertSerializer
+
     def get(self, request, state_id):
         """
         This method returns all adverts in a particular state that have

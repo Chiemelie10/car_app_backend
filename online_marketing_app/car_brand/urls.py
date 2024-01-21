@@ -5,5 +5,5 @@ from car_brand.views.get_brands import GetBrands
 
 urlpatterns = [
     path('api/brands/', GetBrands.as_view(), name='get-brands'),
-    path('api/brands', GetBrands.as_view(), name='get-brands'),
+    # path('api/brands', GetBrands.as_view(), name='get-brands'),
 ]

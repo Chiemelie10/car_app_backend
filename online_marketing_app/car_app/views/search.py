@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from car_app.models import User
 from car_app.serializers.user_serializer import GetUserSerializer
 from car_advert.utils import paginate_queryset
+from drf_spectacular.utils import extend_schema
 
 
 class SearchUsers(APIView):
@@ -15,6 +16,41 @@ class SearchUsers(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
 
+    @extend_schema(
+        request={"application/json": {"example":
+                                      {"search": "query string",
+                                       "page": 1,
+                                       "page_size": 1}}},
+        responses={200: {"example": {'total_users_found': 1,
+                                     'total_pages': 1,
+                                     'previous_page': None,
+                                     'next_page': None,
+                                     'users': [
+                                        {
+                                            "id": "string",
+                                            "last_login": "2024-01-19T23:25:46.774Z",
+                                            "username": "string",
+                                            "email": "user@example.com",
+                                            "phone_number": "stringstrin",
+                                            "first_name": "string",
+                                            "last_name": "string",
+                                            "is_staff": True,
+                                            "is_active": True,
+                                            "is_superuser": True,
+                                            "is_manager": True,
+                                            "is_marketer": True,
+                                            "is_verified": True,
+                                            "manager_code": "string",
+                                            "referral_code": "string",
+                                            "created_at": "2024-01-19T23:25:46.774Z",
+                                            "updated_at": "2024-01-19T23:25:46.774Z",
+                                            "team_manager": "string",
+                                            "groups": [],
+                                            "user_permissions": []
+                                        }
+                                    ]
+                                    }}},
+    )
     def post(self, request):
         """
         This method searches for users by username, first_name, last_name,
@@ -60,11 +96,11 @@ class SearchUsers(APIView):
             next_page = None
 
         data = {
-            'total_adverts': len(results),
+            'total_users_found': len(results),
             'total_pages': total_pages,
             'previous_page': previous_page,
             'next_page': next_page,
-            'adverts': serializer.data
+            'users': serializer.data
         }
 
         return JsonResponse(data, status=200, safe=False)

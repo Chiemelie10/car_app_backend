@@ -12,6 +12,8 @@ class GetCities(APIView):
     """
     # pylint: disable=unused-argument
 
+    serializer_class = CityModelSerializer
+
     def get(self, request):
         """
         This method returns all instances of the City model

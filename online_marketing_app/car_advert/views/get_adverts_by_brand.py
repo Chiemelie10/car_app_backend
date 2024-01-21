@@ -10,6 +10,8 @@ class AdvertsByBrand(APIView):
     # pylint: disable=no-member
     # pylint: disable=unused-argument
 
+    serializer_class = CarAdvertSerializer
+
     def get(self, request, brand_id):
         """
         This method returns all adverts of a particular brand that have

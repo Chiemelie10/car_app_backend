@@ -11,6 +11,7 @@ from car_app.views.views_helper_functions import decode_token
 from car_app.models import User
 from image.models import Image
 from user_activity.models import UserActivity
+from drf_spectacular.utils import extend_schema
 
 
 class GetDeleteUpdateAdvert(APIView):
@@ -24,6 +25,7 @@ class GetDeleteUpdateAdvert(APIView):
 
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
+    serializer_class = CarAdvertSerializer
 
     def validate_state_city(self, validated_data, car_advert_instance):
         """This method enforces state and city foreign key relationship."""
@@ -237,6 +239,12 @@ class GetDeleteUpdateAdvert(APIView):
         serializer = CarAdvertSerializer(advert)
         return JsonResponse(serializer.data, status=200)
 
+    @extend_schema(
+        responses={200: 
+                   {"example": 
+                    {"message": 
+                     "Advert d089c6dd-41ae-4e94-aa1d-371eecbcd88a deleted successfully."}}}
+    )
     def delete(self, request, pk):
         """
         This method deletes an instance of the CarAdvert model if the provided id

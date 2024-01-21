@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from user_activity.models import UserActivity
 from car_app.models import User
 from car_app.views.views_helper_functions import decode_token, decode_refresh_token
+from drf_spectacular.utils import extend_schema
 
 
 class UserLogout(APIView):
@@ -18,6 +19,11 @@ class UserLogout(APIView):
 
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+            request={"application/json": {"example": {"refresh": "refresh_token"}}},
+            responses={200: {"example": {"message": "Logged out successfully."}}},
+    )
 
     def post(self, request):
         """This method blacklists refresh token when a user logs out."""

@@ -10,6 +10,8 @@ class AdvertsByManufactureYear(APIView):
     # pylint: disable=no-member
     # pylint: disable=unused-argument
 
+    serializer_class = CarAdvertSerializer
+
     def get(self, request, year_id):
         """
         This method returns all adverts of a particular manufacture year

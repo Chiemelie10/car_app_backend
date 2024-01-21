@@ -19,6 +19,7 @@ requests = "*"
 python-magic-bin = "*"
 imagehash = "*"
 stripe = "*"
+drf-spectacular = "*"
 
 [dev-packages]
 

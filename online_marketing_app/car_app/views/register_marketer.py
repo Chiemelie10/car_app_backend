@@ -7,14 +7,26 @@ from django.db.utils import IntegrityError
 from car_app.views.views_helper_functions import password_hasher, decode_token
 from car_app.serializers.middleware.validate_user import validate_user
 from car_app.models import User
+from car_app.serializers.user_serializer import GetUserSerializer
 from user_activity.models import UserActivity
+from drf_spectacular.utils import extend_schema
 
 
 class MarketerRegistrationView(APIView):
     """Defines a method for creating a new user(marketer)."""
 
     permission_classes = [IsAdminUser]
+    serializer_class = GetUserSerializer
 
+    @extend_schema(
+        request={"application/json": {"example":
+                                      {"username": "example_user",
+                                       "password": "secret_password",
+                                       "email": "example@gmail.com",
+                                       "first_name": "user_first_name",
+                                       "last_name": "user_last_name",
+                                       "phone_number": "07058679688"}}}
+    )
     @method_decorator(validate_user)
     def post(self, request, validated_data):
         """
@@ -48,6 +60,7 @@ class MarketerRegistrationView(APIView):
                 validated_data['team_manager'] = team_manager
                 user = User(**validated_data)
                 user.save()
+                serializer = GetUserSerializer(user)
 
                 UserActivity.objects.create(
                     user = staff_user,
@@ -55,7 +68,7 @@ class MarketerRegistrationView(APIView):
                     activity_details = f'New user: {user.id}',
                 )
 
-                return JsonResponse({'message': 'Account created successfully.'}, status=201)
+                return JsonResponse(serializer.data, status=201)
             except User.DoesNotExist:
                 error_message = 'Invalid referral code, remove field if not certain.'
                 return JsonResponse({'error': error_message}, status=400)

@@ -9,6 +9,7 @@ from car_app.models import User
 from car_app.utils import generate_ref_code
 from car_app.serializers.user_serializer import GetUserSerializer, UserModelSerializer
 from user_activity.models import UserActivity
+from drf_spectacular.utils import extend_schema
 
 
 class GetDeleteUpdateUser(APIView):
@@ -22,6 +23,7 @@ class GetDeleteUpdateUser(APIView):
 
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
+    serializer_class = GetUserSerializer
 
     def get(self, request, pk):
         """
@@ -35,6 +37,10 @@ class GetDeleteUpdateUser(APIView):
             return JsonResponse(serializer.data, status=200)
         except User.DoesNotExist:
             return JsonResponse({'error': 'User not found'}, status=400)
+        
+    @extend_schema(
+        responses={200: {"example": {"message": "Account for TestUser has been deleted successfully."}}},
+    )
 
     def delete(self, request, pk):
         """

@@ -10,7 +10,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     """This class overwrites the user model provided by Django"""
     id = models.CharField(default=uuid4, primary_key=True, unique=True,
                           editable=False, max_length=36)
-    username = models.CharField(max_length=100, unique=True)
+    username = models.CharField(max_length=110, unique=True)
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=11,

@@ -20,10 +20,21 @@ from django.urls import path
 from django.urls import include
 from django.conf import settings
 from django.conf.urls.static import static
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from rest_framework_swagger.views import get_swagger_view
 from car_app.views.exception_handlers.page_not_found import custom_404_view
+
+
+# schema_view = get_swagger_view(title='CarAutos API Documentation')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    # path('api/schema', SpectacularAPIView.as_view(), name='schema'),
+    path('api/schema/docs/', SpectacularSwaggerView.as_view(url_name='schema')),
+    # path('api/schema/docs', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    # path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+    # path('api/redoc', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     path('', include('car_app.urls')),
     path('', include('car_advert.urls')),
     path('', include('user_activity.urls')),

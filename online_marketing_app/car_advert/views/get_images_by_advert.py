@@ -10,6 +10,8 @@ class ImagesByAdvert(APIView):
     # pylint: disable=no-member
     # pylint: disable=unused-argument
 
+    serializer_class = ImageModelSerializer
+
     def get(self, request, advert_id):
         """This method returns all images of a particlar advert."""
         try:

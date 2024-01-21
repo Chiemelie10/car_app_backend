@@ -12,6 +12,8 @@ class GetManufactureYears(APIView):
     """
     # pylint: disable=unused-argument
 
+    serializer_class = ManufactureYearSerializer
+
     def get(self, request):
         """
         This method returns all instances of the ManufactureYear model

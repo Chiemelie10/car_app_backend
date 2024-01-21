@@ -4,6 +4,6 @@ from user_activity.views.get_user_activities import GetUserActivity
 
 
 urlpatterns = [
-    path('api/activities', GetUserActivity.as_view(), name='get-user-activity'),
+    # path('api/activities', GetUserActivity.as_view(), name='get-user-activity'),
     path('api/activities/', GetUserActivity.as_view(), name='get-user-activity'),
 ]

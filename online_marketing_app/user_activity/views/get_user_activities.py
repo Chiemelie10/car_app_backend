@@ -12,6 +12,7 @@ class GetUserActivity(APIView):
     """This class defines a method to get all user activities."""
 
     permission_classes = [IsAdminUser]
+    serializer_class = UserActivitySerializer
 
     def get(self, request):
         """This method returns all user activities."""

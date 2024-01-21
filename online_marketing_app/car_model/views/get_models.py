@@ -12,6 +12,8 @@ class GetModels(APIView):
     """
     # pylint: disable=unused-argument
 
+    serializer_class = CarModelSerializer
+
     def get(self, request):
         """
         This method returns all instances of the CarModel model

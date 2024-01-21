@@ -10,6 +10,8 @@ class ModelsByBrand(APIView):
     # pylint: disable=no-member
     # pylint: disable=unused-argument
 
+    serializer_class = CarModelSerializer
+
     def get(self, request, brand_id):
         """This method returns all models of a particular brand."""
         try:

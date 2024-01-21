@@ -10,6 +10,8 @@ class CitiesByState(APIView):
     # pylint: disable=no-member
     # pylint: disable=unused-argument
 
+    serializer_class = CityModelSerializer
+
     def get(self, request, state_id):
         """This method returns all cities of a particular state."""
         try:

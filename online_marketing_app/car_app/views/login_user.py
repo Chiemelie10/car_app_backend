@@ -5,10 +5,17 @@ from django.contrib.auth import authenticate
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from user_activity.models import UserActivity
+from drf_spectacular.utils import extend_schema
 
 
 class UserLogin(APIView):
     """This class defines a method for user login"""
+
+    @extend_schema(
+        request={"application/json": {"example": {"username": "example_user", "password": "secret_password"}}},
+        responses={200: {"example": {"refresh": "refresh_token", "access": "access_token"}}},
+    )
+
     def post(self, request):
         """
         This method returns access and refresh tokens for a user
@@ -56,4 +63,4 @@ class UserLogin(APIView):
             activity_type = 'Login',
         )
 
-        return JsonResponse({'refrsh': str(refresh), 'access': access}, status=200)
+        return JsonResponse({'refresh': str(refresh), 'access': access}, status=200)

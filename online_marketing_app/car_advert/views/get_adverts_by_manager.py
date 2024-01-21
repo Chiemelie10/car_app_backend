@@ -13,6 +13,8 @@ class GetManagerAdvert(APIView):
     # pylint: disable=unused-argument
     # pylint: disable=no-member
 
+    serializer_class = CarAdvertSerializer
+
     def get(self, request, manager_id):
         """
         This method returns all adverts managed by a user

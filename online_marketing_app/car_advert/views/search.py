@@ -4,12 +4,59 @@ from django.http import JsonResponse
 from car_advert.models import CarAdvert
 from car_advert.serializers import CarAdvertSerializer
 from car_advert.utils import paginate_queryset
+from drf_spectacular.utils import extend_schema
 
 
 class SearchAdvert(APIView):
     """This class defines a post method that searches for adverts."""
     # pylint: disable=no-member
 
+    # serializer_class = CarAdvertSerializer
+
+    @extend_schema(
+        request={"application/json": {"example":
+                                      {"search": "query string",
+                                       "page": 1,
+                                       "page_size": 1}}},
+        responses={200: {"example": {'total_adverts': 1,
+                                     'total_pages': 1,
+                                     'previous_page': None,
+                                     'next_page': None,
+                                     'adverts': [
+                                        {
+                                            "id": "string",
+                                            "images": [
+                                                {
+                                                "id": 0,
+                                                "image": "string",
+                                                "cloud_image": "string",
+                                                "created_at": "2024-01-19T23:54:33.649Z",
+                                                "updated_at": "2024-01-19T23:54:33.649Z",
+                                                "car_advert": "string"
+                                                }
+                                            ],
+                                            "is_active": True,
+                                            "thumbnail": "string",
+                                            "thumbnail_cloud": "string",
+                                            "title": "string",
+                                            "description": "string",
+                                            "tag": "string",
+                                            "price": "-639297.",
+                                            "fuel_type": "petrol",
+                                            "is_cloud_server_images": True,
+                                            "is_cloud_server_thumbnail": True,
+                                            "created_at": "2024-01-19T23:54:33.650Z",
+                                            "updated_at": "2024-01-19T23:54:33.650Z",
+                                            "brand": 0,
+                                            "model": 0,
+                                            "year": 0,
+                                            "user": "string",
+                                            "state": 0,
+                                            "city": 0
+                                        }
+                                    ]
+                                    }}},
+    )
     def post(self, request):
         """This method searches for adverts by title, description, fuel_type or tag."""
         if request.content_type != 'application/json':

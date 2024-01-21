@@ -18,6 +18,7 @@ class PostAdvert(APIView):
 
     permission_classes = [IsAdminUser]
     parser_classes = [JSONParser, MultiPartParser, FormParser]
+    serializer_class = CarAdvertSerializer
 
     def validate_images(self, validated_data):
         """This method validates images."""

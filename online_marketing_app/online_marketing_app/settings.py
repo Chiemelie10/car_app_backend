@@ -55,12 +55,20 @@ INSTALLED_APPS = [
     'city',
     'image',
     'user_activity',
+    'drf_spectacular',
+    # 'rest_framework_swagger',
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'CarAutos service API',
+    'COMPONENT_SPLIT_REQUEST': True
 }
 
 SIMPLE_JWT = {

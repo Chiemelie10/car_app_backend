@@ -5,5 +5,5 @@ from car_manufacture_year.views.get_manufacture_years import GetManufactureYears
 
 urlpatterns = [
     path('api/years/', GetManufactureYears.as_view(), name='get-years'),
-    path('api/years', GetManufactureYears.as_view(), name='get-years'),
+    # path('api/years', GetManufactureYears.as_view(), name='get-years'),
 ]

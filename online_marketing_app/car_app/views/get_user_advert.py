@@ -10,6 +10,8 @@ class GetUserAdvert(APIView):
     # pylint: disable=no-member
     # pylint: disable=unused-argument
 
+    serializer_class = CarAdvertSerializer
+
     def get(self, request, user_id, advert_id):
         """This method gets an advert depending on the provided user_id and advert_id."""
         try:

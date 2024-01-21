@@ -12,6 +12,8 @@ class GetStates(APIView):
     """
     # pylint: disable=unused-argument
 
+    serializer_class = StateModelSerializer
+
     def get(self, request):
         """
         This method returns all instances of the State model

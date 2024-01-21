@@ -15,6 +15,8 @@ class GetAdverts(APIView):
     """
     # pylint: disable=unused-argument
 
+    serializer_class = CarAdvertSerializer
+
     def get(self, request):
         """
         This method returns all instances of the CarAdvert module in the database.

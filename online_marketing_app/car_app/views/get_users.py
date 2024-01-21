@@ -11,6 +11,7 @@ class GetUsers(APIView):
     users of the application.
     """
     # pylint: disable=unused-argument
+    serializer_class = GetUserSerializer
 
     def get(self, request):
         """

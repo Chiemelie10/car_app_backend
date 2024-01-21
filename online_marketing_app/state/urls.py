@@ -5,5 +5,5 @@ from state.views.get_states import GetStates
 
 urlpatterns = [
     path('api/states/', GetStates.as_view(), name='get-states'),
-    path('api/states', GetStates.as_view(), name='get-states'),
+    # path('api/states', GetStates.as_view(), name='get-states'),
 ]

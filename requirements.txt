@@ -9,3 +9,7 @@ djangorestframework-simplejwt
 pyjwt
 pillow
 gunicorn
+python-magic
+imagehash
+stripe
+drf-spectacular

@@ -11,6 +11,7 @@ class GetBrands(APIView):
     of CarBrand in the database.
     """
     # pylint: disable=unused-argument
+    serializer_class = CarBrandSerializer
 
     def get(self, request):
         """

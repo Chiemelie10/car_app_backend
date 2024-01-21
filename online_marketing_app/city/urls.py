@@ -6,9 +6,9 @@ from city.views.get_cities_by_state import CitiesByState
 
 urlpatterns = [
     path('api/cities/', GetCities.as_view(), name='get-cities'),
-    path('api/cities', GetCities.as_view(), name='get-cities'),
+#     path('api/cities', GetCities.as_view(), name='get-cities'),
     path('api/states/<int:state_id>/cities/', CitiesByState.as_view(),
          name='get-cities-by-state'),
-    path('api/states/<int:state_id>/cities', CitiesByState.as_view(),
-         name='get-cities-by-state'),
+#     path('api/states/<int:state_id>/cities', CitiesByState.as_view(),
+#          name='get-cities-by-state'),
 ]
